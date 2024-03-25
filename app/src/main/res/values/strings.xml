@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">ShopBillInventory</string>
+    <string name="forgotpassword">Forgot Password</string>
+    <string name="pleasegotoemailtochnagepassword">Email is sent to gmail \n Please go to the Gmail to Change the Passord</string>
 </resources>

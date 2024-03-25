@@ -1,5 +1,6 @@
 package com.example.shopbillinventory
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Patterns
@@ -31,6 +32,9 @@ class MainActivity : AppCompatActivity() {
                             "Account Registered Successfully...!",
                             Toast.LENGTH_SHORT
                         ).show()
+                        val intent = Intent(this, LoginActivity::class.java)
+                        startActivity(intent)
+                        finish()
                     } else {
                         Toast.makeText(
                             this,
@@ -41,6 +45,11 @@ class MainActivity : AppCompatActivity() {
                 }
             }
 
+        }
+        mainBinding.tvalredyhaveanaccount.setOnClickListener {
+            val intent = Intent(this, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
         }
 
     }
