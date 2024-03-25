@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "904452779039",
+    "project_id": "shopbilling-a9335",
+    "storage_bucket": "shopbilling-a9335.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:904452779039:android:78bba4bcf4f26712e6392a",
+        "android_client_info": {
+          "package_name": "com.example.shopbillinventory"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA__Sqia7kIiou1XyvGW-oNVJteM1YFbt0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
