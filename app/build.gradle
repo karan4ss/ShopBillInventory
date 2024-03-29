@@ -50,6 +50,10 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.android.gms:play-services-auth:21.0.0'
 
+    //for scanner
+    implementation 'com.github.yuriy-budiyev:code-scanner:2.3.0'
+
+
 
 
 

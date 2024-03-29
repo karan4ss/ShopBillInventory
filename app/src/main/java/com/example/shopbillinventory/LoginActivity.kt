@@ -24,8 +24,9 @@ class LoginActivity : AppCompatActivity() {
             if (checkAllFields()) {
                 auth.signInWithEmailAndPassword(email, password).addOnCompleteListener {
                     if (it.isSuccessful) {
-
                         Toast.makeText(this, "Login Successfully...!", Toast.LENGTH_SHORT).show()
+                        val intent = Intent(this, DashboardActivity::class.java)
+                        startActivity(intent)
                     } else {
                         Toast.makeText(this, "Login Failed...!", Toast.LENGTH_SHORT).show()
                     }
