@@ -12,13 +12,20 @@
         android:layout_height="match_parent"
         tools:context=".DashboardActivity">
 
+        <include
+            android:id="@+id/includeToolbar"
+            layout="@layout/custom_toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?actionBarSize"
+            android:layout_alignParentTop="true" />
+
         <androidx.cardview.widget.CardView
             android:id="@+id/cvofBussinessCard"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             app:cardBackgroundColor="@color/bussinesscard_bg_color"
-            app:layout_constraintTop_toTopOf="parent">
+            app:layout_constraintTop_toBottomOf="@+id/includeToolbar">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"

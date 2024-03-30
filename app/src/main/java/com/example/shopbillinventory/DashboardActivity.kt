@@ -3,6 +3,7 @@ package com.example.shopbillinventory
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
 import androidx.fragment.app.Fragment
 import com.example.shopbillinventory.Fragments.DashboardFragment
 import com.example.shopbillinventory.Fragments.Fragment_BillPaymentHistory
@@ -18,6 +19,8 @@ class DashboardActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityDashboardBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        val includedLayout = findViewById<View>(R.id.includeToolbar)
+
         supportFragmentManager.beginTransaction()
             .replace(R.id.body_container, DashboardFragment())
             .commit()
@@ -29,18 +32,23 @@ class DashboardActivity : AppCompatActivity() {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.body_container, DashboardFragment())
                         .commit()
+
                     true
+
+
                 }
                 R.id.bottom_nav_bill_history -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.body_container, Fragment_BillPaymentHistory())
                         .commit()
+
                     true
                 }
                 R.id.bottom_nav_bussprofile -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.body_container, Fragment_Bussiness_info())
                         .commit()
+
                     true
                 }
                 else -> false
