@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/bussinesscard_bg_color"
+    tools:context=".SplashScreenActivity">
+
+    <com.makeramen.roundedimageview.RoundedImageView
+        android:id="@+id/rvSplashScreenLogo"
+        android:layout_width="170dp"
+        android:layout_height="160dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="120dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/invoice_logo"
+        android:transitionName="iv_profileimg"
+        android:visibility="visible"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:riv_border_color="@color/white"
+        app:riv_border_width="2dip"
+        app:riv_corner_radius="10dip"
+        app:riv_mutate_background="true"
+        app:riv_oval="true" />
+
+    <TextView
+        android:id="@+id/tvSloganSplashScreen"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="35dp"
+        android:text="Manage Stocks And Make Bills"
+        android:textColor="@color/white"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/rvSplashScreenLogo" />
+
+    <LinearLayout
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="80dp"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <com.makeramen.roundedimageview.RoundedImageView
+            android:id="@+id/rvCompanyLogo"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_marginEnd="10dp"
+            android:layout_marginBottom="0dp"
+            android:scaleType="fitXY"
+            android:src="@drawable/klogo"
+            android:transitionName="iv_profileimg"
+            android:visibility="visible"
+            app:riv_border_color="@color/white"
+            app:riv_border_width="2dip"
+            app:riv_corner_radius="10dip"
+            app:riv_mutate_background="true"
+            app:riv_oval="true" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:fontFamily="@font/designer"
+            android:text="@string/company_name"
+            android:textColor="@color/white" />
+
+
+    </LinearLayout>
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

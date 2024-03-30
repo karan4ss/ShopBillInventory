@@ -52,6 +52,8 @@ dependencies {
 
     //for scanner
     implementation 'com.github.yuriy-budiyev:code-scanner:2.3.0'
+    //rounded imageview
+    implementation 'com.makeramen:roundedimageview:2.3.0'
 
 
 

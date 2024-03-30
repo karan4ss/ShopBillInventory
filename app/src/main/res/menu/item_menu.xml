@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/bottom_nav_dashboard"
+        android:icon="@drawable/dashboard_icon"
+        android:title="@string/dashboard"/>
+    <item
+        android:id="@+id/bottom_nav_bill_history"
+        android:icon="@drawable/bill_payment_history"
+        android:title="@string/billhistory"/>
+    <item
+        android:id="@+id/bottom_nav_bussprofile"
+        android:icon="@drawable/bussiness_info_icon"
+        android:title="@string/dashboard"/>
+</menu>

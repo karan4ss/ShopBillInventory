@@ -7,8 +7,11 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="light_white">#FDF9F9</color>
+    <color name="radiobuttons">#52A856</color>
 
     <color name="green_popti">#4DE453</color>
     <color name="red">#FF0000</color>
     <color name="bussinesscard_bg_color">#31116A</color>
+    <color name="transparent">#88888888</color>
 </resources>

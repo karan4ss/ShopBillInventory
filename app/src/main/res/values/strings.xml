@@ -1,5 +1,11 @@
 <resources>
+    <string name="company_name">Soft Tech</string>
     <string name="app_name">ShopBillInventory</string>
     <string name="forgotpassword">Forgot Password</string>
     <string name="pleasegotoemailtochnagepassword">Email is sent to gmail \n Please go to the Gmail to Change the Passord</string>
+    <string name="dashboard">Dashboard</string>
+    <string name="billhistory">Bill History</string>
+    <string name="BussInfo">Buss Info</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
