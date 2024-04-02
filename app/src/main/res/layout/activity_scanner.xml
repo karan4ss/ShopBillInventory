@@ -36,12 +36,85 @@
             android:layout_marginHorizontal="8dp"
             android:layout_marginTop="10dp">
 
+
+            <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:id="@+id/llofTitles"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="6"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/tvId"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.5"
+                    android:gravity="start"
+                    android:maxLines="4"
+                    android:padding="5dp"
+                    android:text="Id" />
+
+                <TextView
+                    android:id="@+id/tvproductName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1.5"
+                    android:gravity="start"
+                    android:maxLines="4"
+                    android:padding="5dp"
+                    android:text="Product Name     " />
+
+                <TextView
+                    android:id="@+id/tvprdWeight"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="start"
+                    android:maxLines="4"
+                    android:padding="5dp"
+                    android:text="Weight " />
+
+                <TextView
+                    android:id="@+id/tvprdQty"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="start"
+                    android:maxLines="4"
+                    android:padding="5dp"
+                    android:text="Qty " />
+
+                <TextView
+                    android:id="@+id/tvTotalAmt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="start"
+                    android:maxLines="4"
+                    android:padding="5dp"
+                    android:text="Rate " />
+
+                <TextView
+                    android:id="@+id/tvprdMrp"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="start"
+                    android:maxLines="4"
+                    android:padding="5dp"
+                    android:text="Total\nAmount" />
+
+
+            </LinearLayout>
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvItemAddedtoBill"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginTop="10dp"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@+id/llofTitles" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
