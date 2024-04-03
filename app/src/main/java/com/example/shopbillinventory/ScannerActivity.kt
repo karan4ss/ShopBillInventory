@@ -81,10 +81,6 @@ class ScannerActivity : AppCompatActivity() {
                             var qty = ""
 
                             // Find name
-//                    val nameMatcher = namePattern.matcher(scannedText)
-//                    if (nameMatcher.find()) {
-//                        name = nameMatcher.group()
-//                    }
                             val scannedNewText = scannedText.trim()
                             val lines = scannedNewText.split("\n") // Split the text into lines
                             val trimmedText = lines.first()
