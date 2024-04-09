@@ -40,8 +40,8 @@ class AdapterItemsofBill(
         val weighIntValue = dataList.get(position).weight.toInt()
         holder.tvprdWeight.setText(weighIntValue.toString() + "gm")
         holder.tvprdMrp.setText(dataList.get(position).mrp.toString())
-       // holder.tvprdQty.setText(dataList.get(position).qty.toString())
-        holder.tvprdQty.setText("1")
+        holder.tvprdQty.setText(dataList.get(position).qty.toString())
+        //holder.tvprdQty.setText("1")
         holder.tvTotalAmt.setText(dataList.get(position).total_mat.toString())
         // }
     }

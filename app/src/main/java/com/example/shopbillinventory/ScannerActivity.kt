@@ -1,9 +1,13 @@
 package com.example.shopbillinventory
 
+import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.widget.EditText
 import android.widget.Toast
@@ -16,9 +20,12 @@ import com.budiyev.android.codescanner.CodeScanner
 import com.budiyev.android.codescanner.DecodeCallback
 import com.budiyev.android.codescanner.ErrorCallback
 import com.budiyev.android.codescanner.ScanMode
+import com.dantsu.escposprinter.EscPosPrinter
+import com.dantsu.escposprinter.connection.bluetooth.BluetoothPrintersConnections
 import com.example.BillitemDataModel
 import com.example.shopbillinventory.Adapters.AdapterItemsofBill
 import com.example.shopbillinventory.databinding.ActivityScannerBinding
+import com.google.firebase.database.*
 import java.util.regex.Pattern
 
 class ScannerActivity : AppCompatActivity() {
@@ -27,10 +34,17 @@ class ScannerActivity : AppCompatActivity() {
     private val CAMERA_REQUEST_CODE = 101;
     val myStringList = mutableListOf<String>()
     val billItemListGlobal: MutableList<BillitemDataModel> = mutableListOf()
+    var global_grand_amount: String = ""
+    var billingCount: Long = 0
+    private val REQUEST_BLUETOOTH_PERMISSION = 1001
+    private val REQUEST_STORAGE_PERMISSION = 1002
+    private lateinit var databaseReference: DatabaseReference
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         scannerBinding = ActivityScannerBinding.inflate(layoutInflater)
         setContentView(scannerBinding.root)
+        // Initialize Firebase database reference
+        databaseReference = FirebaseDatabase.getInstance().reference
         setUpPermissions()
         codeScanner = CodeScanner(this, scannerBinding.ScannerView)
 
@@ -42,6 +56,25 @@ class ScannerActivity : AppCompatActivity() {
         codeScanner.scanMode = ScanMode.SINGLE // or CONTINUOUS or PREVIEW
         codeScanner.isAutoFocusEnabled = true // Whether to enable auto focus or not
         codeScanner.isFlashEnabled = false // Whether to enable flash or not
+
+
+        databaseReference.child("Billing_Count")
+            .addListenerForSingleValueEvent(object : ValueEventListener {
+                override fun onDataChange(snapshot: DataSnapshot) {
+                    if (snapshot.exists()) {
+                        var stringCount = snapshot.getValue().toString()
+                        billingCount = stringCount.toLong() + 1
+
+                    } else {
+                        databaseReference.child("Billing_Count").setValue(0)
+                        billingCount = 0;
+                    }
+                }
+
+                override fun onCancelled(error: DatabaseError) {
+                    TODO("Not yet implemented")
+                }
+            })
 
         // Callbacks
         codeScanner.decodeCallback = DecodeCallback {
@@ -113,6 +146,7 @@ class ScannerActivity : AppCompatActivity() {
                             }
                             //
                             val total_amount = mrp.toDouble() * et_qty.toDouble();
+                            global_grand_amount = global_grand_amount + total_amount
                             //  val total_amount = 10
                             // Create a BillitemDataModel instance and add it to the list
                             val billItem = BillitemDataModel(
@@ -121,9 +155,72 @@ class ScannerActivity : AppCompatActivity() {
                             )
                             billItemList.add(billItem)
                             billItemListGlobal.addAll(billItemList)
-                            billItemList.clear()
-                            myStringList.clear()
+
+
+                            /////////////////////////
+
+
+                            ////
+                            //
+                            val reference1 =
+                                databaseReference.child("Billings").child(billingCount.toString())
+                            databaseReference.child("Billing_Count")
+                                .setValue(billingCount.toString())
+                            for ((index, item) in billItemListGlobal.withIndex()) {
+                                reference1.child("Bill_Items").child(index.toString())
+                                    .setValue(item)
+                            }
+                            // Calculate and save grandTotal
+                            val grandTotal =
+                                billItemListGlobal.sumByDouble { it.total_mat.toDouble() }
+                            reference1.child("grandTotal").setValue(grandTotal)
+
+
+                            val reference = databaseReference.child("Billings")
+                                .child(billingCount.toString())
+                            reference.addValueEventListener(object :
+                                ValueEventListener {
+                                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                                    val billItems =
+                                        mutableListOf<BillitemDataModel>()
+                                    val billItemsSnapshot =
+                                        dataSnapshot.child("Bill_Items")
+
+                                    for (childSnapshot in billItemsSnapshot.children) {
+                                        val billItem =
+                                            childSnapshot.getValue(BillitemDataModel::class.java)
+                                        billItem?.let { billItems.add(it) }
+                                    }
+
+                                    // Calculate and set grand total
+                                    val grandTotal =
+                                        dataSnapshot.child("grandTotal")
+                                            .getValue(Double::class.java)
+
+                                    scannerBinding.tvGrandTotalAmt.setText(grandTotal.toString())
+                                    // Update RecyclerView with bill items
+                                    scannerBinding.rvItemAddedtoBill.layoutManager =
+                                        LinearLayoutManager(this@ScannerActivity)
+                                    scannerBinding.rvItemAddedtoBill.adapter =
+                                        AdapterItemsofBill(
+                                            this@ScannerActivity,
+                                            billItems
+                                        )
+
+                                    billItemList.clear()
+                                    myStringList.clear()
+
+                                    // Example: textViewGrandTotal.text = grandTotal.toString()
+                                }
+
+                                override fun onCancelled(databaseError: DatabaseError) {
+                                    // Handle error
+                                }
+                            })
+
+
                         }
+
 
                     }
                     setNegativeButton("Cancel") { dialogLayout, which ->
@@ -133,10 +230,13 @@ class ScannerActivity : AppCompatActivity() {
                     show()
                 }
 
-                scannerBinding.rvItemAddedtoBill.layoutManager =
-                    LinearLayoutManager(this)
-                scannerBinding.rvItemAddedtoBill.adapter =
-                    AdapterItemsofBill(this, billItemListGlobal)
+                //
+
+
+                //
+
+
+                //
 
 
                 //
@@ -155,6 +255,41 @@ class ScannerActivity : AppCompatActivity() {
         scannerBinding.ScannerView.setOnClickListener {
             codeScanner.startPreview()
         }
+        scannerBinding.btnPrintBill.setOnClickListener {
+            val reference = databaseReference.child("Billings")
+                .child(billingCount.toString())
+            reference.addValueEventListener(object :
+                ValueEventListener {
+                override fun onDataChange(dataSnapshot: DataSnapshot) {
+                    val billItems =
+                        mutableListOf<BillitemDataModel>()
+                    val billItemsSnapshot =
+                        dataSnapshot.child("Bill_Items")
+
+                    for (childSnapshot in billItemsSnapshot.children) {
+                        val billItem =
+                            childSnapshot.getValue(BillitemDataModel::class.java)
+                        billItem?.let { billItems.add(it) }
+                    }
+
+                    // Calculate and set grand total
+                    val grandTotal =
+                        dataSnapshot.child("grandTotal")
+                            .getValue(Double::class.java)
+
+                    scannerBinding.tvGrandTotalAmt.setText(grandTotal.toString())
+
+
+                    checkStoragePermissions(billItems)
+
+                    // Example: textViewGrandTotal.text = grandTotal.toString()
+                }
+
+                override fun onCancelled(databaseError: DatabaseError) {
+                    // Handle error
+                }
+            })
+        }
     }
 
     override fun onResume() {
@@ -165,6 +300,26 @@ class ScannerActivity : AppCompatActivity() {
     override fun onPause() {
         codeScanner.releaseResources()
         super.onPause()
+    }
+
+    private fun checkStoragePermissions(billItems: List<BillitemDataModel>) {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+            )
+            != PackageManager.PERMISSION_GRANTED
+        ) {
+            // Permission not granted, request it
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(android.Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                REQUEST_STORAGE_PERMISSION
+            )
+        } else {
+            // Storage permission already granted, proceed with your code
+            val logo: Bitmap = BitmapFactory.decodeResource(resources, R.drawable.klogo)
+            printBill(billItems, "Om Sai Pooja Sahitya", "Shukrawar peth,teli lane, kolhapur", logo)
+        }
     }
 
     private fun setUpPermissions() {
@@ -198,7 +353,75 @@ class ScannerActivity : AppCompatActivity() {
 
                 }
             }
+            REQUEST_BLUETOOTH_PERMISSION -> {
+                if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                    // Bluetooth permissions granted, proceed to check storage permissions
+                    ///  checkStoragePermissions()
+                } else {
+                    // Bluetooth permissions denied, handle accordingly
+                    // For example, show a message to the user explaining why the permissions are necessary
+                }
+            }
+            REQUEST_STORAGE_PERMISSION -> {
+                if (grantResults.isNotEmpty() && grantResults.all { it == PackageManager.PERMISSION_GRANTED }) {
+                    // Storage permission granted, proceed with your code
+                    /// printBill()
+                } else {
+                    // Storage permission denied, handle accordingly
+                    // For example, show a message to the user explaining why the permission is necessary
+                }
+            }
         }
 
     }
+
+    fun printBill(
+        billItems: List<BillitemDataModel>,
+        shopName: String,
+        shopAddress: String,
+        logo: Bitmap
+    ) {
+        // Initialize Bluetooth printer connection
+        val printer = EscPosPrinter(
+            BluetoothPrintersConnections.selectFirstPaired(),
+            203,
+            48f,
+            32
+        )
+
+
+        printer.printFormattedText("$shopName\n")
+        printer.printFormattedText("$shopAddress\n")
+        // printer.printImage(logo) // Assuming you have a method to print images
+        printer.printFormattedText("\n") // Add a blank line after the logo
+
+        // Print titles
+        printer.printFormattedText(
+            "Product Name     Weight     Quantity     Rate     Total Amount\n" +
+                    "--------------------------------------------------------------\n"
+        )
+
+        // Print bill items
+        var grandTotal = 0.0
+        for (item in billItems) {
+            val productName = item.name.padEnd(15)
+            val weight = item.weight.toString().padEnd(10)
+            val quantity = item.qty.toString().padEnd(10)
+            val rate = item.mrp.toString().padEnd(10)
+            val totalAmount = item.total_mat.toString().padEnd(10)
+
+            printer.printFormattedText("$productName$weight$quantity$rate$totalAmount\n")
+
+            // Accumulate total amount
+            grandTotal += item.total_mat
+        }
+
+        // Print Grand Total
+        printer.printFormattedText("--------------------------------------------------------------\n")
+        printer.printFormattedText("Grand Total: $grandTotal\n") // Assuming total amount is a double
+
+        // printer.feed(2)
+        printer.disconnectPrinter()
+    }
+
 }
