@@ -25,6 +25,7 @@ class PaymentPlansActivity : AppCompatActivity() {
     var userDataData = hashMapOf<String, Any>()
     private var loginEmail: String? = null
     lateinit var rootView: View
+    lateinit var today: LocalDate
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,65 +33,18 @@ class PaymentPlansActivity : AppCompatActivity() {
         paymentPlansBinding = ActivityPaymentPlansBinding.inflate(layoutInflater)
         setContentView(paymentPlansBinding.root)
         loginEmail = intent?.getStringExtra("login_email")
-        val today = LocalDate.now()
+        today = LocalDate.now()
         rootView = findViewById(android.R.id.content)
         paymentPlansBinding.cvoneMonth.setOnClickListener {
             planamount = paymentPlansBinding.tvOnemontAmount.text.toString()
             futureDate = today.plusDays(28).toString()
-            val parsedFutureDate = LocalDate.parse(futureDate)
-            val parsedTodayDate = LocalDate.parse(today.toString())
-            val formatter = DateTimeFormatter.ofPattern("d/M/yyyy")
-            val futureDateFormatted = parsedFutureDate.format(formatter)
-            val todaydate = parsedTodayDate.format(formatter)
+//            val parsedFutureDate = LocalDate.parse(futureDate)
+//            val parsedTodayDate = LocalDate.parse(today.toString())
+//            val formatter = DateTimeFormatter.ofPattern("d/M/yyyy")
+//            val futureDateFormatted = parsedFutureDate.format(formatter)
+//            val todaydate = parsedTodayDate.format(formatter)
             // Toast.makeText(this, futureDateFormatted, Toast.LENGTH_SHORT).show()
-
-            val sharedPreferences = this?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
-
-// Retrieve the email address from SharedPreferences
-            val email = sharedPreferences?.getString("email", "")
-            val database = FirebaseDatabase.getInstance()
-            val ref = database.getReference("registered_users")
-            val query: Query =
-                ref.child("Owner").orderByChild("email").equalTo(email)
-            query.addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        for (snapshot in snapshot.children) {
-                            val email = snapshot.child("email").getValue(String::class.java)
-                            val password = snapshot.child("password").getValue(String::class.java)
-                            val userType = snapshot.child("userType").getValue(String::class.java)
-                            val userId = snapshot.child("userid").getValue(Long::class.java)
-
-                            // Do whatever you want with the retrieved data
-                            // For example, you can log it
-                            println("Email: $email")
-                            println("password: $password")
-                            println("userType: $userType")
-                            println("Userid: $userId")
-
-
-                            userDataData.apply {
-                                put("email", email!!)
-                                put("password", password!!)
-                                put("userType", userType!!)
-                                put("userid", userId!!)
-                                put("plan_amount", planamount!!)
-                                put("start_date", todaydate!!)
-                                put("end_date", futureDateFormatted!!)
-                            }
-                            openPhonePeWithAmount(planamount)
-                        }
-
-
-                    }
-
-                }
-
-                override fun onCancelled(error: DatabaseError) {
-
-                }
-
-            })
+            getUserdata(futureDate,planamount)
 
 
         }
@@ -98,19 +52,21 @@ class PaymentPlansActivity : AppCompatActivity() {
         paymentPlansBinding.cvThreeMonth.setOnClickListener {
             planamount = paymentPlansBinding.tvThreeMonthAmount.text.toString()
             futureDate = today.plusDays(84).toString()
-            val parsedFutureDate = LocalDate.parse(futureDate)
-            val formatter = DateTimeFormatter.ofPattern("d/M/yyyy")
-            val futureDateFormatted = parsedFutureDate.format(formatter)
-            openPhonePeWithAmount(planamount)
+//            val parsedFutureDate = LocalDate.parse(futureDate)
+//            val formatter = DateTimeFormatter.ofPattern("d/M/yyyy")
+//            val futureDateFormatted = parsedFutureDate.format(formatter)
+//            openPhonePeWithAmount(planamount)
+            getUserdata(futureDate,planamount)
 
         }
         paymentPlansBinding.cvOneYear.setOnClickListener {
             planamount = paymentPlansBinding.tvOneYearAmount.text.toString()
             futureDate = today.plusDays(364).toString()
-            val parsedFutureDate = LocalDate.parse(futureDate)
-            val formatter = DateTimeFormatter.ofPattern("d/M/yyyy")
-            val futureDateFormatted = parsedFutureDate.format(formatter)
-            openPhonePeWithAmount(planamount)
+//            val parsedFutureDate = LocalDate.parse(futureDate)
+//            val formatter = DateTimeFormatter.ofPattern("d/M/yyyy")
+//            val futureDateFormatted = parsedFutureDate.format(formatter)
+//            openPhonePeWithAmount(planamount)
+            getUserdata(futureDate,planamount)
 
         }
 
@@ -170,7 +126,15 @@ class PaymentPlansActivity : AppCompatActivity() {
                 RESULT_CANCELED -> {
                     // Payment cancelled by user
                     // Toast.makeText(this, "payment canceled", Toast.LENGTH_SHORT).show()
-                    showSnackbar(rootView, "Payment Cancel", Snackbar.LENGTH_LONG)
+//                    showSnackbar(rootView, "Payment Cancel", Snackbar.LENGTH_LONG)
+//                    val database = FirebaseDatabase.getInstance()
+//                    val ref = database.getReference("plan_validity")
+//                    ref.setValue(userDataData).addOnSuccessListener {
+//
+//                        showSnackbar(rootView, "Login Successfully...!", Snackbar.LENGTH_LONG)
+//                    }.addOnFailureListener { e ->
+//                        Toast.makeText(this, e.toString(), Toast.LENGTH_SHORT).show()
+//                    }
                 }
                 else -> {
                     // Payment failed
@@ -192,6 +156,63 @@ class PaymentPlansActivity : AppCompatActivity() {
             snackbarView.findViewById(com.google.android.material.R.id.snackbar_text) as TextView
         textView.setTextColor(Color.WHITE) // Set text color
         snackbar.show()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun getUserdata(futureDatePassed: String,planAmountPassed: String) {
+
+        val parsedFutureDate = LocalDate.parse(futureDatePassed)
+        val parsedTodayDate = LocalDate.parse(today.toString())
+        val formatter = DateTimeFormatter.ofPattern("d/M/yyyy")
+        val futureDateFormatted = parsedFutureDate.format(formatter)
+        val todaydate = parsedTodayDate.format(formatter)
+        val sharedPreferences = this?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+
+// Retrieve the email address from SharedPreferences
+        val email = sharedPreferences?.getString("email", "")
+        val database = FirebaseDatabase.getInstance()
+        val ref = database.getReference("registered_users")
+        val query: Query =
+            ref.child("Owner").orderByChild("email").equalTo(email)
+        query.addValueEventListener(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    for (snapshot in snapshot.children) {
+                        val email = snapshot.child("email").getValue(String::class.java)
+                        val password = snapshot.child("password").getValue(String::class.java)
+                        val userType = snapshot.child("userType").getValue(String::class.java)
+                        val userId = snapshot.child("userid").getValue(Long::class.java)
+
+                        // Do whatever you want with the retrieved data
+                        // For example, you can log it
+                        println("Email: $email")
+                        println("password: $password")
+                        println("userType: $userType")
+                        println("Userid: $userId")
+
+
+                        userDataData.apply {
+                            put("email", email!!)
+                            put("password", password!!)
+                            put("userType", userType!!)
+                            put("userid", userId!!)
+                            put("plan_amount", planAmountPassed!!)
+                            put("start_date", todaydate!!)
+                            put("end_date", futureDateFormatted!!)
+                        }
+                        openPhonePeWithAmount(planAmountPassed)
+                    }
+
+
+                }
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+
+            }
+
+        })
     }
 
 }

@@ -76,6 +76,7 @@ class DashboardFragment : Fragment() {
 
         binding.includeToolbar.tvToolbarTitle.setText("Counter Billing")
         binding.includeToolbar.ivtoolbarBackicon.visibility = View.GONE
+        binding.includeToolbar.ivLogout.visibility = View.GONE
         binding.includeToolbar.ivToolbarPlansIcon.setOnClickListener {
             //startActivity(Intent(context, PaymentPlansActivity::class.java))
             val intent = Intent(context, PaymentPlansActivity::class.java)

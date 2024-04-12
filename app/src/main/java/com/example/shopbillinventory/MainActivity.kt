@@ -1,5 +1,6 @@
 package com.example.shopbillinventory
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -15,6 +16,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var mainBinding: ActivityMainBinding
     private lateinit var databaseReference: DatabaseReference
+    @SuppressLint("SuspiciousIndentation")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mainBinding = ActivityMainBinding.inflate(layoutInflater)
@@ -24,7 +26,7 @@ class MainActivity : AppCompatActivity() {
 
         // Initialize Firebase database reference
         databaseReference = FirebaseDatabase.getInstance().reference
-
+        databaseReference.child("Owner_register_count").setValue(0)
 
         mainBinding.btnSignUp.setOnClickListener {
             var longCount: Long = 0
@@ -153,11 +155,6 @@ class MainActivity : AppCompatActivity() {
         Toast.makeText(
             this, longCount.toString(), Toast.LENGTH_SHORT
         ).show()
-//        if (mainBinding.rbOwner.isChecked) {
-//            userType = mainBinding.rbOwner.text.toString()
-//        } else {
-//            userType = mainBinding.rbEmployee.text.toString()
-//        }
         if (checkAllFields()) {
 
             auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
@@ -178,5 +175,5 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+        }
     }
-}

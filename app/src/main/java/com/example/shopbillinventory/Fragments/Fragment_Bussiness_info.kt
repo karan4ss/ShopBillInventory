@@ -1,5 +1,7 @@
 package com.example.shopbillinventory.Fragments
 
+import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.Fragment
@@ -7,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import com.example.shopbillinventory.LoginActivity
 import com.example.shopbillinventory.R
 import com.example.shopbillinventory.databinding.FragmentBussinessInfoBinding
 import com.example.shopbillinventory.databinding.FragmentDashboardBinding
@@ -33,6 +36,30 @@ class Fragment_Bussiness_info : Fragment() {
         val view = binding.root
         arguments?.let {
             loginEmail = it.getString("login_email")
+        }
+
+        binding.includeToolbar.tvToolbarTitle.setText("Bussiness Profile")
+        binding.includeToolbar.ivtoolbarBackicon.visibility = View.VISIBLE
+        binding.includeToolbar.ivToolbarPlansIcon.visibility = View.GONE
+        binding.includeToolbar.ivLogout.visibility = View.VISIBLE
+        binding.includeToolbar.ivLogout.setOnClickListener {
+            val sharedPreferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+
+            // Use the SharedPreferences.Editor to remove the email address from SharedPreferences
+            val editor = sharedPreferences?.edit()
+            editor?.remove("email")
+            editor?.remove("loggedInBefore")
+
+// Commit or apply the changes
+            editor?.apply()
+
+            val intent = Intent(context, LoginActivity::class.java)
+            startActivity(intent)
+            activity?.finish()
+        }
+
+        binding.includeToolbar.ivtoolbarBackicon.setOnClickListener {
+            Toast.makeText(context, "back", Toast.LENGTH_SHORT).show()
         }
         val database = FirebaseDatabase.getInstance()
         val businessRef = database.getReference("bussiness_info").child("1")
