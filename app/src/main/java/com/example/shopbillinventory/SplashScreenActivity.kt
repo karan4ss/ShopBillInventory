@@ -1,6 +1,7 @@
 package com.example.shopbillinventory
 
 import android.animation.ObjectAnimator
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -30,8 +31,17 @@ class SplashScreenActivity : AppCompatActivity() {
         // Start the animation
         translationAnimator.start()
         Handler(Looper.getMainLooper()).postDelayed({
-            startActivity(Intent(this, LoginActivity::class.java))
-            finish()
+
+            val sharedPreferences = getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+            val loggedInBefore = sharedPreferences.getBoolean("loggedInBefore", false)
+            if (loggedInBefore){
+                startActivity(Intent(this, DashboardActivity::class.java))
+                finish()
+            }else{
+                startActivity(Intent(this, LoginActivity::class.java))
+                finish()
+            }
+
         }, 4000)
     }
 }

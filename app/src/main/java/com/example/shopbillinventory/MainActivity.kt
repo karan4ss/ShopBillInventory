@@ -30,7 +30,7 @@ class MainActivity : AppCompatActivity() {
             var longCount: Long = 0
 
 
-            if (mainBinding.rbOwner.isChecked) {
+          //  if (mainBinding.rbOwner.isChecked) {
                 // Check if 'user_register_count' node exists
                 databaseReference.child("Owner_register_count")
                     .addListenerForSingleValueEvent(object : ValueEventListener {
@@ -59,7 +59,8 @@ class MainActivity : AppCompatActivity() {
                             // Handle error
                         }
                     })
-            } else if (mainBinding.rbEmployee.isChecked) {
+    //        }
+    /*else if (mainBinding.rbEmployee.isChecked) {
                 databaseReference.child("Employee_register_count")
                     .addListenerForSingleValueEvent(object : ValueEventListener {
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
@@ -80,7 +81,7 @@ class MainActivity : AppCompatActivity() {
                             // Handle error
                         }
                     })
-            }
+            }*/
 
 
         }
@@ -148,15 +149,15 @@ class MainActivity : AppCompatActivity() {
     private fun signupWithEmail(longCount: Long) {
         val email = mainBinding.etEmail.text.toString()
         val password = mainBinding.etPassword.text.toString()
-        var userType: String = ""
+        var userType: String = "Owner"
         Toast.makeText(
             this, longCount.toString(), Toast.LENGTH_SHORT
         ).show()
-        if (mainBinding.rbOwner.isChecked) {
-            userType = mainBinding.rbOwner.text.toString()
-        } else {
-            userType = mainBinding.rbEmployee.text.toString()
-        }
+//        if (mainBinding.rbOwner.isChecked) {
+//            userType = mainBinding.rbOwner.text.toString()
+//        } else {
+//            userType = mainBinding.rbEmployee.text.toString()
+//        }
         if (checkAllFields()) {
 
             auth.createUserWithEmailAndPassword(email, password).addOnCompleteListener {
@@ -167,6 +168,7 @@ class MainActivity : AppCompatActivity() {
                         this, "Account Registered Successfully...!", Toast.LENGTH_SHORT
                     ).show()
                     val intent = Intent(this, LoginActivity::class.java)
+                    intent.putExtra("fromRegister", 1)
                     startActivity(intent)
                     finish()
                 } else {

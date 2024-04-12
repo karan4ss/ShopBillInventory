@@ -9,12 +9,20 @@
     <string name="oneMonth">1 Month</string>
     <string name="threeMonths">3 Month</string>
     <string name="oneYear">1 Year</string>
-    <string name="oneMonthAmt">399</string>
+    <string name="oneMonthAmt">1</string>
     <string name="ThreeMonthsAmt">1,099</string>
     <string name="oneYearAmt">4,444</string>
+
     <string name="onemonthDesc">This is valid for 28 days</string>
     <string name="threemonthDesc">This is valid for 84 days</string>
     <string name="oneyearDesc">This is valid for 364 days</string>
+
+    <string name="bussinessDescription">Bussiness Description</string>
+    <string name="bussinessName">Bussiness Name</string>
+    <string name="bussinessAddress">Bussiness Address</string>
+    <string name="mobileNumber">Mobile Number</string>
+    <string name="fbid">Facebook Id</string>
+    <string name="instaid">Instagram Id</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
