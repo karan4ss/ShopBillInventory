@@ -44,7 +44,7 @@ class PaymentPlansActivity : AppCompatActivity() {
 //            val futureDateFormatted = parsedFutureDate.format(formatter)
 //            val todaydate = parsedTodayDate.format(formatter)
             // Toast.makeText(this, futureDateFormatted, Toast.LENGTH_SHORT).show()
-            getUserdata(futureDate,planamount)
+            getUserdata(futureDate, planamount)
 
 
         }
@@ -56,7 +56,7 @@ class PaymentPlansActivity : AppCompatActivity() {
 //            val formatter = DateTimeFormatter.ofPattern("d/M/yyyy")
 //            val futureDateFormatted = parsedFutureDate.format(formatter)
 //            openPhonePeWithAmount(planamount)
-            getUserdata(futureDate,planamount)
+            getUserdata(futureDate, planamount)
 
         }
         paymentPlansBinding.cvOneYear.setOnClickListener {
@@ -66,7 +66,7 @@ class PaymentPlansActivity : AppCompatActivity() {
 //            val formatter = DateTimeFormatter.ofPattern("d/M/yyyy")
 //            val futureDateFormatted = parsedFutureDate.format(formatter)
 //            openPhonePeWithAmount(planamount)
-            getUserdata(futureDate,planamount)
+            getUserdata(futureDate, planamount)
 
         }
 
@@ -159,7 +159,7 @@ class PaymentPlansActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun getUserdata(futureDatePassed: String,planAmountPassed: String) {
+    private fun getUserdata(futureDatePassed: String, planAmountPassed: String) {
 
         val parsedFutureDate = LocalDate.parse(futureDatePassed)
         val parsedTodayDate = LocalDate.parse(today.toString())
