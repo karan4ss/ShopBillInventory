@@ -1,5 +1,6 @@
 package com.example.shopbillinventory.Fragments
 
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -8,7 +9,10 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
+import androidx.core.content.ContextCompat
 import com.example.shopbillinventory.LoginActivity
 import com.example.shopbillinventory.R
 import com.example.shopbillinventory.databinding.FragmentBussinessInfoBinding
@@ -21,6 +25,9 @@ import com.google.firebase.database.ValueEventListener
 class Fragment_Bussiness_info : Fragment() {
     private lateinit var binding: FragmentBussinessInfoBinding
     private var loginEmail: String? = null
+    lateinit var dialog: Dialog
+    lateinit var btnLogout: Button
+    lateinit var btnogouCancel: Button
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -38,11 +45,24 @@ class Fragment_Bussiness_info : Fragment() {
             loginEmail = it.getString("login_email")
         }
 
-        binding.includeToolbar.tvToolbarTitle.setText("Bussiness Profile")
-        binding.includeToolbar.ivtoolbarBackicon.visibility = View.VISIBLE
-        binding.includeToolbar.ivToolbarPlansIcon.visibility = View.GONE
-        binding.includeToolbar.ivLogout.visibility = View.VISIBLE
-        binding.includeToolbar.ivLogout.setOnClickListener {
+
+        dialog = Dialog(requireContext())
+        dialog.setContentView(R.layout.confirm_dialog_logout)
+        dialog.window?.setLayout(
+            ViewGroup.LayoutParams.WRAP_CONTENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
+        val drawable = ContextCompat.getDrawable(requireContext(), R.drawable.custome_dialog_bg)
+        dialog.window?.setBackgroundDrawable(drawable)
+        dialog.setCancelable(false)
+        btnLogout = dialog.findViewById(R.id.btnLogoutDialog)
+        btnogouCancel = dialog.findViewById(R.id.btnLogoutDialogCancel)
+
+
+        btnogouCancel.setOnClickListener {
+            dialog.dismiss()
+        }
+        btnLogout.setOnClickListener {
             val sharedPreferences = context?.getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
 
             // Use the SharedPreferences.Editor to remove the email address from SharedPreferences
@@ -56,6 +76,14 @@ class Fragment_Bussiness_info : Fragment() {
             val intent = Intent(context, LoginActivity::class.java)
             startActivity(intent)
             activity?.finish()
+        }
+        binding.includeToolbar.tvToolbarTitle.setText("Bussiness Profile")
+        binding.includeToolbar.ivtoolbarBackicon.visibility = View.VISIBLE
+        binding.includeToolbar.ivToolbarPlansIcon.visibility = View.GONE
+        binding.includeToolbar.ivLogout.visibility = View.VISIBLE
+        binding.includeToolbar.ivLogout.setOnClickListener {
+            dialog.show()
+
         }
 
         binding.includeToolbar.ivtoolbarBackicon.setOnClickListener {

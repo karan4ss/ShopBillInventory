@@ -47,6 +47,7 @@ class DashboardActivity : AppCompatActivity() {
                     putString("login_email", login_email)
                 }
             }
+            showSnackbar(rootView, "Login Successfully...!", Snackbar.LENGTH_LONG)
             supportFragmentManager.beginTransaction()
                 .replace(R.id.body_container, dashboardFragment)
                 .commit()

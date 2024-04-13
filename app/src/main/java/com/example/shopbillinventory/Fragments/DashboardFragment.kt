@@ -1,5 +1,6 @@
 package com.example.shopbillinventory.Fragments
 
+import android.app.Dialog
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
@@ -8,12 +9,11 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import com.example.shopbillinventory.BillingDataActivity
-import com.example.shopbillinventory.PaymentPlansActivity
-import com.example.shopbillinventory.R
-import com.example.shopbillinventory.ScannerActivity
+import androidx.core.content.ContextCompat
+import com.example.shopbillinventory.*
 import com.example.shopbillinventory.databinding.FragmentDashboardBinding
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -29,6 +29,9 @@ class DashboardFragment : Fragment() {
     private lateinit var binding: FragmentDashboardBinding
 
     private var loginEmail: String? = null
+    lateinit var dialog: Dialog
+    lateinit var btnCancelRecharge: Button
+    lateinit var btnGotoRecharge: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -88,6 +91,10 @@ class DashboardFragment : Fragment() {
 
             retrieveData()
         }
+        binding.cvIncome.setOnClickListener{
+            val intent = Intent(context,IncomeActivity::class.java)
+            startActivity(intent)
+        }
 
         return view
     }
@@ -131,6 +138,31 @@ class DashboardFragment : Fragment() {
                             "your plan are expired , recharge and gets ",
                             Toast.LENGTH_SHORT
                         ).show()
+                        dialog = Dialog(requireContext())
+                        dialog.setContentView(R.layout.confirm_dialog_planexpired)
+                        dialog.window?.setLayout(
+                            ViewGroup.LayoutParams.WRAP_CONTENT,
+                            ViewGroup.LayoutParams.WRAP_CONTENT
+                        )
+                        val drawable = ContextCompat.getDrawable(
+                            requireContext(),
+                            R.drawable.custome_dialog_bg
+                        )
+                        dialog.window?.setBackgroundDrawable(drawable)
+                        dialog.setCancelable(false)
+                        btnCancelRecharge = dialog.findViewById(R.id.btncancelRecharge)
+                        btnGotoRecharge = dialog.findViewById(R.id.btnGotoRecharge)
+                        dialog.show()
+
+                        btnGotoRecharge.setOnClickListener {
+                            val intent = Intent(context, PaymentPlansActivity::class.java)
+                            startActivity(intent)
+
+                        }
+                        btnCancelRecharge.setOnClickListener {
+                            dialog.dismiss()
+                        }
+
                     }
                 } else {
                     // Data does not exist

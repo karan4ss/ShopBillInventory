@@ -5,12 +5,14 @@ import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.widget.EditText
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -26,6 +28,10 @@ import com.example.BillitemDataModel
 import com.example.shopbillinventory.Adapters.AdapterItemsofBill
 import com.example.shopbillinventory.databinding.ActivityScannerBinding
 import com.google.firebase.database.*
+import java.text.SimpleDateFormat
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
+import java.util.*
 import java.util.regex.Pattern
 
 class ScannerActivity : AppCompatActivity() {
@@ -38,7 +44,11 @@ class ScannerActivity : AppCompatActivity() {
     var billingCount: Long = 0
     private val REQUEST_BLUETOOTH_PERMISSION = 1001
     private val REQUEST_STORAGE_PERMISSION = 1002
+
+    lateinit var today: LocalDate
     private lateinit var databaseReference: DatabaseReference
+
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         scannerBinding = ActivityScannerBinding.inflate(layoutInflater)
@@ -46,6 +56,45 @@ class ScannerActivity : AppCompatActivity() {
         // Initialize Firebase database reference
         databaseReference = FirebaseDatabase.getInstance().reference
         setUpPermissions()
+
+
+        ///////////////////k
+        val today = LocalDate.now()
+        //val formatter = DateTimeFormatter.ofPattern("d/M/yyyy")
+        val formatter = DateTimeFormatter.ofPattern("d-M-yyyy")
+        val todayDate = today.format(formatter)
+        val currentMonth = SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(Date())
+
+        val dbReferenceForTodaysBusiness =
+            databaseReference.child("Todays_Business_Amount").child(currentMonth).child(todayDate)
+
+        dbReferenceForTodaysBusiness.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    // Node already exists for today's date in the current month
+                    // You can handle this case accordingly
+                    Toast.makeText(applicationContext, "Already exists", Toast.LENGTH_SHORT).show()
+                } else {
+                    // Node doesn't exist for today's date in the current month
+                    // Create the node and set its value
+                    dbReferenceForTodaysBusiness.setValue(0)
+                        .addOnSuccessListener {
+                            // Node creation and value setting successful
+                        }
+                        .addOnFailureListener {
+                            // Node creation or value setting failed
+                        }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Handle onCancelled event
+            }
+        })
+
+
+        //////////////////
+
         codeScanner = CodeScanner(this, scannerBinding.ScannerView)
 
         // Parameters (default values)
@@ -147,8 +196,7 @@ class ScannerActivity : AppCompatActivity() {
                             //
                             val total_amount = mrp.toDouble() * et_qty.toDouble();
                             global_grand_amount = global_grand_amount + total_amount
-                            //  val total_amount = 10
-                            // Create a BillitemDataModel instance and add it to the list
+
                             val billItem = BillitemDataModel(
                                 name, mrp, weight, et_qty,
                                 total_amount.toDouble()
@@ -156,11 +204,6 @@ class ScannerActivity : AppCompatActivity() {
                             billItemList.add(billItem)
                             billItemListGlobal.addAll(billItemList)
 
-
-                            /////////////////////////
-
-
-                            ////
                             //
                             val reference1 =
                                 databaseReference.child("Billings").child(billingCount.toString())
@@ -281,6 +324,57 @@ class ScannerActivity : AppCompatActivity() {
 
 
                     checkStoragePermissions(billItems)
+
+
+                    //////////////////k
+                    val reference1 =
+                        databaseReference.child("Confirmed_Billings").child(billingCount.toString())
+                    databaseReference.child("Confirmed_Billing_Count")
+                        .setValue(billingCount.toString())
+                    for ((index, item) in billItemListGlobal.withIndex()) {
+                        reference1.child("Confirmed_Bill_Items").child(index.toString())
+                            .setValue(item)
+                    }
+                    // Calculate and save grandTotal
+                    val grandTotaltosave =
+                        billItemListGlobal.sumByDouble { it.total_mat.toDouble() }
+                    reference1.child("Confirmed_grandTotal").setValue(grandTotaltosave)
+
+
+
+
+                    dbReferenceForTodaysBusiness.addListenerForSingleValueEvent(object :
+                        ValueEventListener {
+                        override fun onDataChange(snapshot: DataSnapshot) {
+                            if (snapshot.exists()) {
+                                val businessAmount = snapshot.getValue(Int::class.java)
+                                val todyasIncome: Long
+                                todyasIncome = (businessAmount!! + grandTotaltosave).toLong()
+                                dbReferenceForTodaysBusiness.setValue(todyasIncome)
+
+                                // Handle the retrieved business amount
+                                Toast.makeText(
+                                    applicationContext,
+                                    "Business amount: $businessAmount",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                // Node does not exist for the specified date
+                                Toast.makeText(
+                                    applicationContext,
+                                    "No data available for today",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+
+                        override fun onCancelled(error: DatabaseError) {
+                            // Handle onCancelled event
+                        }
+                    })
+
+
+                    //////////////////
 
                     // Example: textViewGrandTotal.text = grandTotal.toString()
                 }

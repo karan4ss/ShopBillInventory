@@ -176,7 +176,7 @@
                     app:layout_constraintTop_toTopOf="parent">
 
                     <androidx.cardview.widget.CardView
-                        android:id="@+id/cvstockandBilling"
+                        android:id="@+id/cvIncome"
                         android:layout_width="0dp"
                         android:layout_height="match_parent"
                         android:layout_margin="10dp"
@@ -189,13 +189,14 @@
                             android:layout_height="match_parent">
 
                             <TextView
-                                android:id="@+id/tvAddStock"
+                                android:id="@+id/tvGetTodyasBusiiness"
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:layout_below="@+id/ivAddStock"
                                 android:layout_centerHorizontal="true"
                                 android:layout_marginTop="10dp"
-                                android:text="Add Stock"
+                                android:gravity="center"
+                                android:text="Income"
                                 android:textColor="@color/black"
                                 android:textSize="20sp" />
 

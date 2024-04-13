@@ -23,7 +23,12 @@
     <string name="mobileNumber">Mobile Number</string>
     <string name="fbid">Facebook Id</string>
     <string name="instaid">Instagram Id</string>
+    <string name="confirmlogout">Confirm Logout</string>
+    <string name="areyousuretologout">Are you sure you want to logout?</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="yourplanexpired">Your Plan is Expired</string>
+    <string name="pleaserechargetostartbilling">Please Recharge to start the billing</string>
+
 </resources>
