@@ -24,7 +24,9 @@
     <string name="fbid">Facebook Id</string>
     <string name="instaid">Instagram Id</string>
     <string name="confirmlogout">Confirm Logout</string>
+    <string name="confirmsharebill">Share Bill</string>
     <string name="areyousuretologout">Are you sure you want to logout?</string>
+    <string name="areyousuretosharetowhatsup">Are you sure you want to share bill on whatsapp?</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
