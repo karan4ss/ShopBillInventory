@@ -10,8 +10,8 @@
     <string name="threeMonths">3 Month</string>
     <string name="oneYear">1 Year</string>
     <string name="oneMonthAmt">1</string>
-    <string name="ThreeMonthsAmt">1,099</string>
-    <string name="oneYearAmt">4,444</string>
+    <string name="ThreeMonthsAmt">1099</string>
+    <string name="oneYearAmt">4444</string>
 
     <string name="onemonthDesc">This is valid for 28 days</string>
     <string name="threemonthDesc">This is valid for 84 days</string>

@@ -73,7 +73,7 @@ class ShowPerticularBillActivity : AppCompatActivity() {
                 // if (phoneNumber.isNotEmpty()) {
                 // openWhatsApp(phoneNumber)
                 var mobNo: Editable? = dialog.findViewById<EditText>(R.id.etMobileNumber).text
-                if(!mobNo.isNullOrEmpty() || !mobNo.isNullOrBlank()){
+                if (!mobNo.isNullOrEmpty() || !mobNo.isNullOrBlank()) {
                     shareAsImage()
                 }
 

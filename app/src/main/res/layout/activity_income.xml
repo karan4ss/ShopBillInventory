@@ -134,6 +134,19 @@
 
     </LinearLayout>
 
+
+    <TextView
+        android:id="@+id/tvShowsAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/white"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/btnShowHistoryinMixOrder"
+        app:layout_constraintStart_toStartOf="@+id/btnShowHistoryinMixOrder"
+        app:layout_constraintTop_toBottomOf="@+id/btnShowHistoryinMixOrder" />
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvMixOrder"
         android:layout_width="match_parent"

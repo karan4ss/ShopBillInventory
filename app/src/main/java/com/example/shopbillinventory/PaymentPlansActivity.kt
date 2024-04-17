@@ -2,6 +2,7 @@ package com.example.shopbillinventory
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
 import android.net.Uri
 import android.os.Build
@@ -93,7 +94,7 @@ class PaymentPlansActivity : AppCompatActivity() {
      }*/
 
 
-    private fun openPhonePeWithAmount(amount: String) {
+    /*private fun openPhonePeWithAmount(amount: String) {
         val uri =
             Uri.parse("upi://pay?pa=8421888138@ybl&pn=TamashaTV&am=$amount&cu=INR&tn=Purpose%20of%20Payment")
 
@@ -101,7 +102,36 @@ class PaymentPlansActivity : AppCompatActivity() {
 
         // Start the activity for result to get status after payment
         startActivityForResult(intent, UPI_PAYMENT_REQUEST_CODE)
+    }*/
+
+    private fun openPhonePeWithAmount(amount: String) {
+        val packageName = "com.phonepe.app" // Package name of PhonePe app
+
+        // Check if PhonePe app is installed
+        val packageManager = applicationContext.packageManager
+        val isPhonePeInstalled = try {
+            packageManager.getPackageInfo(packageName, 0)
+            true
+        } catch (e: PackageManager.NameNotFoundException) {
+            false
+        }
+
+        if (isPhonePeInstalled) {
+            val uri =
+                Uri.parse("upi://pay?pa=8421888138-2@ibl&pn=KSOFTTech&am=$amount&cu=INR&tn=Purpose%20of%20Payment")
+            val intent = Intent(Intent.ACTION_VIEW, uri)
+
+            // Set the package to filter only PhonePe app
+            intent.setPackage(packageName)
+
+            // Start the activity for result to get status after payment
+            startActivityForResult(intent, UPI_PAYMENT_REQUEST_CODE)
+        } else {
+            // PhonePe app is not installed, handle accordingly
+            Toast.makeText(applicationContext, "PhonePe app is not installed", Toast.LENGTH_SHORT).show()
+        }
     }
+
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)

@@ -157,6 +157,34 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 
+    <RadioGroup
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="2"
+        app:layout_constraintBottom_toTopOf="@+id/btn_printBill">
+
+        <RadioButton
+            android:id="@+id/rbtnCash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:buttonTint="@color/red"
+            android:checked="true"
+            android:text="Cash" />
+
+        <RadioButton
+            android:id="@+id/rbtnOnline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:buttonTint="@color/red"
+            android:text="Online" />
+
+
+    </RadioGroup>
+
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_printBill"
         android:layout_width="match_parent"

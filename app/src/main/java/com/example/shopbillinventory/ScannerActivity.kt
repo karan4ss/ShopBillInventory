@@ -59,6 +59,36 @@ class ScannerActivity : AppCompatActivity() {
 
 
         ///////////////////k
+        /* val today = LocalDate.now()
+         //val formatter = DateTimeFormatter.ofPattern("d/M/yyyy")
+         val formatter = DateTimeFormatter.ofPattern("d-M-yyyy")
+         val todayDate = today.format(formatter)
+         val currentMonth = SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(Date())
+
+         val dbReferenceForTodaysBusiness =
+             databaseReference.child("Todays_Business_Amount").child(currentMonth).child(todayDate)
+
+         dbReferenceForTodaysBusiness.addListenerForSingleValueEvent(object : ValueEventListener {
+             override fun onDataChange(snapshot: DataSnapshot) {
+                 if (snapshot.exists()) {
+                     // Node already exists for today's date in the current month
+                     // You can handle this case accordingly
+                     Toast.makeText(applicationContext, "Already exists", Toast.LENGTH_SHORT).show()
+                 } else {
+                     // Node doesn't exist for today's date in the current month
+                     // Create the node and set its value
+                     dbReferenceForTodaysBusiness.setValue(0).addOnSuccessListener {
+                         // Node creation and value setting successful
+                     }.addOnFailureListener {
+                         // Node creation or value setting failed
+                     }
+                 }
+             }
+
+             override fun onCancelled(error: DatabaseError) {
+                 // Handle onCancelled event
+             }
+         })*/
         val today = LocalDate.now()
         //val formatter = DateTimeFormatter.ofPattern("d/M/yyyy")
         val formatter = DateTimeFormatter.ofPattern("d-M-yyyy")
@@ -66,7 +96,12 @@ class ScannerActivity : AppCompatActivity() {
         val currentMonth = SimpleDateFormat("MMMM yyyy", Locale.getDefault()).format(Date())
 
         val dbReferenceForTodaysBusiness =
-            databaseReference.child("Todays_Business_Amount").child(currentMonth).child(todayDate)
+            databaseReference.child("Todays_Business_Amount").child(currentMonth).child("Cash")
+                .child(todayDate)
+
+        val dbReferenceForTodaysBusiness1 =
+            databaseReference.child("Todays_Business_Amount").child(currentMonth).child("Online")
+                .child(todayDate)
 
         dbReferenceForTodaysBusiness.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -77,13 +112,33 @@ class ScannerActivity : AppCompatActivity() {
                 } else {
                     // Node doesn't exist for today's date in the current month
                     // Create the node and set its value
-                    dbReferenceForTodaysBusiness.setValue(0)
-                        .addOnSuccessListener {
-                            // Node creation and value setting successful
-                        }
-                        .addOnFailureListener {
-                            // Node creation or value setting failed
-                        }
+                    dbReferenceForTodaysBusiness.setValue(0).addOnSuccessListener {
+                        // Node creation and value setting successful
+                    }.addOnFailureListener {
+                        // Node creation or value setting failed
+                    }
+                }
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                // Handle onCancelled event
+            }
+        })
+
+        dbReferenceForTodaysBusiness1.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    // Node already exists for today's date in the current month
+                    // You can handle this case accordingly
+                    Toast.makeText(applicationContext, "Already exists", Toast.LENGTH_SHORT).show()
+                } else {
+                    // Node doesn't exist for today's date in the current month
+                    // Create the node and set its value
+                    dbReferenceForTodaysBusiness1.setValue(0).addOnSuccessListener {
+                        // Node creation and value setting successful
+                    }.addOnFailureListener {
+                        // Node creation or value setting failed
+                    }
                 }
             }
 
@@ -198,8 +253,7 @@ class ScannerActivity : AppCompatActivity() {
                             global_grand_amount = global_grand_amount + total_amount
 
                             val billItem = BillitemDataModel(
-                                name, mrp, weight, et_qty,
-                                total_amount.toDouble()
+                                name, mrp, weight, et_qty, total_amount.toDouble()
                             )
                             billItemList.add(billItem)
                             billItemListGlobal.addAll(billItemList)
@@ -219,15 +273,12 @@ class ScannerActivity : AppCompatActivity() {
                             reference1.child("grandTotal").setValue(grandTotal)
 
 
-                            val reference = databaseReference.child("Billings")
-                                .child(billingCount.toString())
-                            reference.addValueEventListener(object :
-                                ValueEventListener {
+                            val reference =
+                                databaseReference.child("Billings").child(billingCount.toString())
+                            reference.addValueEventListener(object : ValueEventListener {
                                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                                    val billItems =
-                                        mutableListOf<BillitemDataModel>()
-                                    val billItemsSnapshot =
-                                        dataSnapshot.child("Bill_Items")
+                                    val billItems = mutableListOf<BillitemDataModel>()
+                                    val billItemsSnapshot = dataSnapshot.child("Bill_Items")
 
                                     for (childSnapshot in billItemsSnapshot.children) {
                                         val billItem =
@@ -236,19 +287,16 @@ class ScannerActivity : AppCompatActivity() {
                                     }
 
                                     // Calculate and set grand total
-                                    val grandTotal =
-                                        dataSnapshot.child("grandTotal")
-                                            .getValue(Double::class.java)
+                                    val grandTotal = dataSnapshot.child("grandTotal")
+                                        .getValue(Double::class.java)
 
                                     scannerBinding.tvGrandTotalAmt.setText(grandTotal.toString())
                                     // Update RecyclerView with bill items
                                     scannerBinding.rvItemAddedtoBill.layoutManager =
                                         LinearLayoutManager(this@ScannerActivity)
-                                    scannerBinding.rvItemAddedtoBill.adapter =
-                                        AdapterItemsofBill(
-                                            this@ScannerActivity,
-                                            billItems
-                                        )
+                                    scannerBinding.rvItemAddedtoBill.adapter = AdapterItemsofBill(
+                                        this@ScannerActivity, billItems
+                                    )
 
                                     billItemList.clear()
                                     myStringList.clear()
@@ -299,26 +347,21 @@ class ScannerActivity : AppCompatActivity() {
             codeScanner.startPreview()
         }
         scannerBinding.btnPrintBill.setOnClickListener {
-            val reference = databaseReference.child("Billings")
-                .child(billingCount.toString())
-            reference.addValueEventListener(object :
-                ValueEventListener {
+
+
+            val reference = databaseReference.child("Billings").child(billingCount.toString())
+            reference.addValueEventListener(object : ValueEventListener {
                 override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val billItems =
-                        mutableListOf<BillitemDataModel>()
-                    val billItemsSnapshot =
-                        dataSnapshot.child("Bill_Items")
+                    val billItems = mutableListOf<BillitemDataModel>()
+                    val billItemsSnapshot = dataSnapshot.child("Bill_Items")
 
                     for (childSnapshot in billItemsSnapshot.children) {
-                        val billItem =
-                            childSnapshot.getValue(BillitemDataModel::class.java)
+                        val billItem = childSnapshot.getValue(BillitemDataModel::class.java)
                         billItem?.let { billItems.add(it) }
                     }
 
                     // Calculate and set grand total
-                    val grandTotal =
-                        dataSnapshot.child("grandTotal")
-                            .getValue(Double::class.java)
+                    val grandTotal = dataSnapshot.child("grandTotal").getValue(Double::class.java)
 
                     scannerBinding.tvGrandTotalAmt.setText(grandTotal.toString())
 
@@ -341,37 +384,77 @@ class ScannerActivity : AppCompatActivity() {
                     reference1.child("Confirmed_grandTotal").setValue(grandTotaltosave)
 
 
+                    var paymentMode: String
 
+                    if (scannerBinding.rbtnCash.isChecked) {
+                        paymentMode = "Cash"
 
-                    dbReferenceForTodaysBusiness.addListenerForSingleValueEvent(object :
-                        ValueEventListener {
-                        override fun onDataChange(snapshot: DataSnapshot) {
-                            if (snapshot.exists()) {
-                                val businessAmount = snapshot.getValue(Int::class.java)
-                                val todyasIncome: Long
-                                todyasIncome = (businessAmount!! + grandTotaltosave).toLong()
-                                dbReferenceForTodaysBusiness.setValue(todyasIncome)
+                        dbReferenceForTodaysBusiness.addListenerForSingleValueEvent(object :
+                            ValueEventListener {
+                            override fun onDataChange(snapshot: DataSnapshot) {
+                                if (snapshot.exists()) {
+                                    val businessAmount = snapshot.getValue(Int::class.java)
+                                    val todyasIncome: Long
+                                    todyasIncome = (businessAmount!! + grandTotaltosave).toLong()
+                                    dbReferenceForTodaysBusiness.setValue(todyasIncome)
 
-                                // Handle the retrieved business amount
-                                Toast.makeText(
-                                    applicationContext,
-                                    "Business amount: $businessAmount",
-                                    Toast.LENGTH_SHORT
-                                ).show()
-                            } else {
-                                // Node does not exist for the specified date
-                                Toast.makeText(
-                                    applicationContext,
-                                    "No data available for today",
-                                    Toast.LENGTH_SHORT
-                                ).show()
+                                    // Handle the retrieved business amount
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "Business amount: $businessAmount",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                    reference1.child("Payment_Mode").setValue(paymentMode)
+                                } else {
+                                    // Node does not exist for the specified date
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "No data available for today",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
                             }
-                        }
 
-                        override fun onCancelled(error: DatabaseError) {
-                            // Handle onCancelled event
-                        }
-                    })
+                            override fun onCancelled(error: DatabaseError) {
+                                // Handle onCancelled event
+                            }
+                        })
+                    } else if (scannerBinding.rbtnOnline.isChecked) {
+                        paymentMode = "Online"
+                        dbReferenceForTodaysBusiness1.addListenerForSingleValueEvent(object :
+                            ValueEventListener {
+                            override fun onDataChange(snapshot: DataSnapshot) {
+                                if (snapshot.exists()) {
+                                    val businessAmount = snapshot.getValue(Int::class.java)
+                                    val todyasIncome: Long
+                                    todyasIncome = (businessAmount!! + grandTotaltosave).toLong()
+                                    dbReferenceForTodaysBusiness1.setValue(todyasIncome)
+
+                                    reference1.child("Payment_Mode").setValue(paymentMode)
+
+                                    // Handle the retrieved business amount
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "Business amount: $businessAmount",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                } else {
+                                    // Node does not exist for the specified date
+                                    Toast.makeText(
+                                        applicationContext,
+                                        "No data available for today",
+                                        Toast.LENGTH_SHORT
+                                    ).show()
+                                }
+                            }
+
+                            override fun onCancelled(error: DatabaseError) {
+                                // Handle onCancelled event
+                            }
+                        })
+                    } else {
+
+                    }
 
 
                     //////////////////
@@ -398,10 +481,8 @@ class ScannerActivity : AppCompatActivity() {
 
     private fun checkStoragePermissions(billItems: List<BillitemDataModel>) {
         if (ContextCompat.checkSelfPermission(
-                this,
-                android.Manifest.permission.WRITE_EXTERNAL_STORAGE
-            )
-            != PackageManager.PERMISSION_GRANTED
+                this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE
+            ) != PackageManager.PERMISSION_GRANTED
         ) {
             // Permission not granted, request it
             ActivityCompat.requestPermissions(
@@ -470,17 +551,11 @@ class ScannerActivity : AppCompatActivity() {
     }
 
     fun printBill(
-        billItems: List<BillitemDataModel>,
-        shopName: String,
-        shopAddress: String,
-        logo: Bitmap
+        billItems: List<BillitemDataModel>, shopName: String, shopAddress: String, logo: Bitmap
     ) {
         // Initialize Bluetooth printer connection
         val printer = EscPosPrinter(
-            BluetoothPrintersConnections.selectFirstPaired(),
-            203,
-            48f,
-            32
+            BluetoothPrintersConnections.selectFirstPaired(), 203, 48f, 32
         )
 
 
@@ -491,8 +566,7 @@ class ScannerActivity : AppCompatActivity() {
 
         // Print titles
         printer.printFormattedText(
-            "Product Name     Weight     Quantity     Rate     Total Amount\n" +
-                    "--------------------------------------------------------------\n"
+            "Product Name     Weight     Quantity     Rate     Total Amount\n" + "--------------------------------------------------------------\n"
         )
 
         // Print bill items

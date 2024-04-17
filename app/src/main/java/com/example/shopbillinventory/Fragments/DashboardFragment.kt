@@ -166,6 +166,10 @@ class DashboardFragment : Fragment() {
                     }
                 } else {
                     // Data does not exist
+                    Toast.makeText(
+                        context,
+                        "Please Recharge First...!",
+                        Toast.LENGTH_SHORT).show()
                 }
             }
 
