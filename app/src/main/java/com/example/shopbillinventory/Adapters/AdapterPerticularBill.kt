@@ -28,8 +28,14 @@ class AdapterPerticularBill(
     }
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
+        val originalText = dataList.get(position).name
+        val maxLengthFirstLine = 12
+        val firstLine = originalText.take(maxLengthFirstLine)
+        val remainingText = originalText.drop(maxLengthFirstLine)
+
+
         holder.tvsetProductName.setText(
-            dataList.get(position).name
+            firstLine + "\n" + remainingText
         )
         holder.tvsetWeight.setText(dataList.get(position).weight.toString())
         holder.tvsetRate.setText(dataList.get(position).mrp.toString())

@@ -3,12 +3,14 @@ package com.example.shopbillinventory
 import android.app.Dialog
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
+import android.text.Editable
 import android.util.Log
 import android.view.ViewGroup
 import android.widget.Button
@@ -16,13 +18,14 @@ import android.widget.EditText
 import android.widget.Toast
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.core.content.FileProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.BillitemDataModel
 import com.example.shopbillinventory.Adapters.AdapterGenratedBills
 import com.example.shopbillinventory.Adapters.AdapterPerticularBill
 import com.example.shopbillinventory.databinding.ActivityShowPerticularBillBinding
 import com.google.firebase.database.*
-import java.io.ByteArrayOutputStream
+import java.io.*
 
 class ShowPerticularBillActivity : AppCompatActivity() {
     private lateinit var perticularBillBinding: ActivityShowPerticularBillBinding
@@ -64,10 +67,16 @@ class ShowPerticularBillActivity : AppCompatActivity() {
             }
             btnShare.setOnClickListener {
 
+                perticularBillBinding.tvmobilenumber.setText(dialog.findViewById<EditText>(R.id.etMobileNumber).text)
+
                 //  val phoneNumber = dialog.findViewById<EditText>(R.id.etMobileNumber).text.toString()
                 // if (phoneNumber.isNotEmpty()) {
                 // openWhatsApp(phoneNumber)
-                shareAsImage()
+                var mobNo: Editable? = dialog.findViewById<EditText>(R.id.etMobileNumber).text
+                if(!mobNo.isNullOrEmpty() || !mobNo.isNullOrBlank()){
+                    shareAsImage()
+                }
+
                 //   } else {
 
                 //   Toast.makeText(this, "Please enter a WhatsApp number", Toast.LENGTH_SHORT)
@@ -146,10 +155,12 @@ class ShowPerticularBillActivity : AppCompatActivity() {
 
             // Set the WhatsApp number in the message body
             intent.putExtra("jid", phoneNumber + "@s.whatsapp.net")
-            intent.putExtra(Intent.EXTRA_TEXT, "Thanks For Visiting...!")
 
             // Set the package to WhatsApp
             intent.setPackage("com.whatsapp")
+
+            // Directly open chat with the specified phone number
+            intent.putExtra(Intent.EXTRA_TEXT, "Thanks For Shopping...!\n Visit Again...!")
 
             // Verify that the intent resolves to an activity
             if (intent.resolveActivity(packageManager) != null) {
@@ -163,21 +174,24 @@ class ShowPerticularBillActivity : AppCompatActivity() {
     }
 
     private fun getImageUri(bitmap: Bitmap): Uri? {
-        val bytes = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.PNG, 100, bytes)
-        val path = MediaStore.Images.Media.insertImage(
-            contentResolver,
-            bitmap,
-            "CardView Image",
-            null
-        )
-        return Uri.parse(path)
+        val context = applicationContext
+        val cw = ContextWrapper(context)
+        val file = File(cw.cacheDir, "image.jpg")
+        try {
+            val stream: OutputStream = FileOutputStream(file)
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, stream)
+            stream.flush()
+            stream.close()
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return FileProvider.getUriForFile(context, "${context.packageName}.provider", file)
     }
 
     private fun shareAsImage() {
         val bitmap = getBitmapFromView(perticularBillBinding.cvofperticularBill)
 
-        val phoneNumber = dialog.findViewById<EditText>(R.id.etMobileNumber).text.toString()
+        val phoneNumber = "91" + dialog.findViewById<EditText>(R.id.etMobileNumber).text.toString()
         if (phoneNumber.isNotEmpty()) {
             // openWhatsApp(phoneNumber)
             if (bitmap != null) {
