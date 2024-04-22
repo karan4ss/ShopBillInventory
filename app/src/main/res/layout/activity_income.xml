@@ -19,13 +19,25 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="See Datewise Mix Order"
+            android:text="See Your Daily Income"
             android:textColor="@color/white"
             android:textSize="25sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+
+        <TextView
+            android:id="@+id/tvshowTip"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="30dp"
+            android:text="Please Select Date Check Amount"
+            android:textColor="@color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tvmixallOrdertext" />
 
         <TextView
             android:id="@+id/tvSelectDate"
@@ -39,7 +51,7 @@
             android:textColor="@color/white"
             android:textSize="15sp"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/tvmixallOrdertext" />
+            app:layout_constraintTop_toBottomOf="@+id/tvshowTip" />
 
         <TextView
             android:id="@+id/tvSetdate"
@@ -50,11 +62,12 @@
             android:gravity="center"
             android:padding="10dp"
             android:text="00-00-0000"
+            android:textColor="@color/white"
             android:textSize="15sp"
             android:textStyle="bold"
             app:layout_constraintLeft_toRightOf="@+id/tvSelectDate"
             app:layout_constraintRight_toLeftOf="@+id/ivArrowup"
-            app:layout_constraintTop_toBottomOf="@+id/tvmixallOrdertext" />
+            app:layout_constraintTop_toBottomOf="@+id/tvshowTip" />
 
         <ImageView
             android:id="@+id/ivArrowup"
@@ -70,7 +83,7 @@
             android:textSize="25sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintLeft_toRightOf="@+id/tvSetdate"
-            app:layout_constraintTop_toBottomOf="@+id/tvmixallOrdertext" />
+            app:layout_constraintTop_toBottomOf="@+id/tvshowTip" />
 
         <ImageView
             android:id="@+id/ivArrowDown"
@@ -91,6 +104,56 @@
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
+
+    <RadioGroup
+        android:id="@+id/rgofonlinecash"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:orientation="vertical"
+        android:weightSum="2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/clHeadinMixOrder">
+
+        <RadioButton
+            android:id="@+id/rbtnCash"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:buttonTint="@color/white"
+            android:text="Cash"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
+        <RadioButton
+            android:id="@+id/rbtnOnline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:buttonTint="@color/white"
+            android:text="Online"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
+
+    </RadioGroup>
+
+    <TextView
+        android:id="@+id/btnClear"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="30dp"
+        android:layout_marginTop="15dp"
+        android:text="Clear"
+        android:textColor="@color/white"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        app:layout_constraintLeft_toRightOf="@+id/rgofonlinecash"
+
+        app:layout_constraintTop_toBottomOf="@+id/clHeadinMixOrder"
+        app:layout_goneMarginTop="10dp" />
+
+
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btnShowHistoryinMixOrder"
         android:layout_width="200dp"
@@ -98,12 +161,13 @@
         android:layout_marginTop="15dp"
         android:background="@drawable/editetxt_border_bg"
         android:backgroundTint="#FF1100"
-        android:text="Show History"
+        android:text="Check Amount"
+        android:textAllCaps="false"
         android:textColor="@color/white"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/clHeadinMixOrder" />
+        app:layout_constraintTop_toBottomOf="@+id/rgofonlinecash" />
 
     <LinearLayout
         android:id="@+id/llRvTitles"
@@ -136,16 +200,30 @@
 
 
     <TextView
-        android:id="@+id/tvShowsAmount"
+        android:id="@+id/tvtodyasbussinessamount"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
+        android:maxLines="2"
         android:textColor="@color/white"
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@id/btnShowHistoryinMixOrder"
         app:layout_constraintStart_toStartOf="@+id/btnShowHistoryinMixOrder"
         app:layout_constraintTop_toBottomOf="@+id/btnShowHistoryinMixOrder" />
+
+    <TextView
+        android:id="@+id/tvShowsAmount"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:maxLines="2"
+        android:textColor="@color/white"
+        android:textSize="30sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="@id/tvtodyasbussinessamount"
+        app:layout_constraintStart_toStartOf="@+id/tvtodyasbussinessamount"
+        app:layout_constraintTop_toBottomOf="@+id/tvtodyasbussinessamount" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvMixOrder"

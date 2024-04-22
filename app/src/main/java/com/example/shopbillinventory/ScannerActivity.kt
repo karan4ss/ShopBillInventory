@@ -47,6 +47,7 @@ class ScannerActivity : AppCompatActivity() {
 
     lateinit var today: LocalDate
     private lateinit var databaseReference: DatabaseReference
+    var flagforonlysingleclickinprintbtn = false
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -346,126 +347,134 @@ class ScannerActivity : AppCompatActivity() {
         scannerBinding.ScannerView.setOnClickListener {
             codeScanner.startPreview()
         }
+
         scannerBinding.btnPrintBill.setOnClickListener {
 
+            if (flagforonlysingleclickinprintbtn) {
+                Toast.makeText(this@ScannerActivity, "Alredy Clicked", Toast.LENGTH_SHORT).show()
+            }else{
+                val reference = databaseReference.child("Billings").child(billingCount.toString())
+                reference.addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        val billItems = mutableListOf<BillitemDataModel>()
+                        val billItemsSnapshot = dataSnapshot.child("Bill_Items")
 
-            val reference = databaseReference.child("Billings").child(billingCount.toString())
-            reference.addValueEventListener(object : ValueEventListener {
-                override fun onDataChange(dataSnapshot: DataSnapshot) {
-                    val billItems = mutableListOf<BillitemDataModel>()
-                    val billItemsSnapshot = dataSnapshot.child("Bill_Items")
+                        for (childSnapshot in billItemsSnapshot.children) {
+                            val billItem = childSnapshot.getValue(BillitemDataModel::class.java)
+                            billItem?.let { billItems.add(it) }
+                        }
 
-                    for (childSnapshot in billItemsSnapshot.children) {
-                        val billItem = childSnapshot.getValue(BillitemDataModel::class.java)
-                        billItem?.let { billItems.add(it) }
-                    }
+                        // Calculate and set grand total
+                        val grandTotal = dataSnapshot.child("grandTotal").getValue(Double::class.java)
 
-                    // Calculate and set grand total
-                    val grandTotal = dataSnapshot.child("grandTotal").getValue(Double::class.java)
-
-                    scannerBinding.tvGrandTotalAmt.setText(grandTotal.toString())
-
-
-                    checkStoragePermissions(billItems)
-
-
-                    //////////////////k
-                    val reference1 =
-                        databaseReference.child("Confirmed_Billings").child(billingCount.toString())
-                    databaseReference.child("Confirmed_Billing_Count")
-                        .setValue(billingCount.toString())
-                    for ((index, item) in billItemListGlobal.withIndex()) {
-                        reference1.child("Confirmed_Bill_Items").child(index.toString())
-                            .setValue(item)
-                    }
-                    // Calculate and save grandTotal
-                    val grandTotaltosave =
-                        billItemListGlobal.sumByDouble { it.total_mat.toDouble() }
-                    reference1.child("Confirmed_grandTotal").setValue(grandTotaltosave)
+                        scannerBinding.tvGrandTotalAmt.setText(grandTotal.toString())
 
 
-                    var paymentMode: String
+                        checkStoragePermissions(billItems)
 
-                    if (scannerBinding.rbtnCash.isChecked) {
-                        paymentMode = "Cash"
 
-                        dbReferenceForTodaysBusiness.addListenerForSingleValueEvent(object :
-                            ValueEventListener {
-                            override fun onDataChange(snapshot: DataSnapshot) {
-                                if (snapshot.exists()) {
-                                    val businessAmount = snapshot.getValue(Int::class.java)
-                                    val todyasIncome: Long
-                                    todyasIncome = (businessAmount!! + grandTotaltosave).toLong()
-                                    dbReferenceForTodaysBusiness.setValue(todyasIncome)
+                        //////////////////k
+                        val reference1 =
+                            databaseReference.child("Confirmed_Billings").child(billingCount.toString())
+                        databaseReference.child("Confirmed_Billing_Count")
+                            .setValue(billingCount.toString())
+                        for ((index, item) in billItemListGlobal.withIndex()) {
+                            reference1.child("Confirmed_Bill_Items").child(index.toString())
+                                .setValue(item)
+                        }
+                        // Calculate and save grandTotal
+                        val grandTotaltosave =
+                            billItemListGlobal.sumByDouble { it.total_mat.toDouble() }
+                        reference1.child("Confirmed_grandTotal").setValue(grandTotaltosave)
 
-                                    // Handle the retrieved business amount
-                                    Toast.makeText(
-                                        applicationContext,
-                                        "Business amount: $businessAmount",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    reference1.child("Payment_Mode").setValue(paymentMode)
-                                } else {
-                                    // Node does not exist for the specified date
-                                    Toast.makeText(
-                                        applicationContext,
-                                        "No data available for today",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+
+                        var paymentMode: String
+
+                        if (scannerBinding.rbtnCash.isChecked) {
+                            paymentMode = "Cash"
+
+                            dbReferenceForTodaysBusiness.addListenerForSingleValueEvent(object :
+                                ValueEventListener {
+                                override fun onDataChange(snapshot: DataSnapshot) {
+                                    if (snapshot.exists()) {
+                                        val businessAmount = snapshot.getValue(Int::class.java)
+                                        val todyasIncome: Long
+                                        todyasIncome = (businessAmount!! + grandTotaltosave).toLong()
+                                        dbReferenceForTodaysBusiness.setValue(todyasIncome)
+
+                                        // Handle the retrieved business amount
+                                        Toast.makeText(
+                                            applicationContext,
+                                            "Business amount: $businessAmount",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        reference1.child("Payment_Mode").setValue(paymentMode)
+                                        flagforonlysingleclickinprintbtn = true
+                                    } else {
+                                        // Node does not exist for the specified date
+                                        Toast.makeText(
+                                            applicationContext,
+                                            "No data available for today",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
                                 }
-                            }
 
-                            override fun onCancelled(error: DatabaseError) {
-                                // Handle onCancelled event
-                            }
-                        })
-                    } else if (scannerBinding.rbtnOnline.isChecked) {
-                        paymentMode = "Online"
-                        dbReferenceForTodaysBusiness1.addListenerForSingleValueEvent(object :
-                            ValueEventListener {
-                            override fun onDataChange(snapshot: DataSnapshot) {
-                                if (snapshot.exists()) {
-                                    val businessAmount = snapshot.getValue(Int::class.java)
-                                    val todyasIncome: Long
-                                    todyasIncome = (businessAmount!! + grandTotaltosave).toLong()
-                                    dbReferenceForTodaysBusiness1.setValue(todyasIncome)
-
-                                    reference1.child("Payment_Mode").setValue(paymentMode)
-
-                                    // Handle the retrieved business amount
-                                    Toast.makeText(
-                                        applicationContext,
-                                        "Business amount: $businessAmount",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                } else {
-                                    // Node does not exist for the specified date
-                                    Toast.makeText(
-                                        applicationContext,
-                                        "No data available for today",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
+                                override fun onCancelled(error: DatabaseError) {
+                                    // Handle onCancelled event
                                 }
-                            }
+                            })
+                        } else if (scannerBinding.rbtnOnline.isChecked) {
+                            paymentMode = "Online"
+                            dbReferenceForTodaysBusiness1.addListenerForSingleValueEvent(object :
+                                ValueEventListener {
+                                override fun onDataChange(snapshot: DataSnapshot) {
+                                    if (snapshot.exists()) {
+                                        val businessAmount = snapshot.getValue(Int::class.java)
+                                        val todyasIncome: Long
+                                        todyasIncome = (businessAmount!! + grandTotaltosave).toLong()
+                                        dbReferenceForTodaysBusiness1.setValue(todyasIncome)
 
-                            override fun onCancelled(error: DatabaseError) {
-                                // Handle onCancelled event
-                            }
-                        })
-                    } else {
+                                        reference1.child("Payment_Mode").setValue(paymentMode)
+                                        flagforonlysingleclickinprintbtn = true
+                                        // Handle the retrieved business amount
+                                        Toast.makeText(
+                                            applicationContext,
+                                            "Business amount: $businessAmount",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    } else {
+                                        // Node does not exist for the specified date
+                                        Toast.makeText(
+                                            applicationContext,
+                                            "No data available for today",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    }
+                                }
 
+                                override fun onCancelled(error: DatabaseError) {
+                                    // Handle onCancelled event
+                                }
+                            })
+                        } else {
+
+                        }
+
+
+                        //////////////////
+
+                        // Example: textViewGrandTotal.text = grandTotal.toString()
                     }
 
+                    override fun onCancelled(databaseError: DatabaseError) {
+                        // Handle error
+                    }
+                })
+            }
 
-                    //////////////////
 
-                    // Example: textViewGrandTotal.text = grandTotal.toString()
-                }
 
-                override fun onCancelled(databaseError: DatabaseError) {
-                    // Handle error
-                }
-            })
         }
     }
 

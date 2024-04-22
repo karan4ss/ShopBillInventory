@@ -12,8 +12,13 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.shopbillinventory.Adapters.AdapterItemsOfPlansInfo
+import com.example.shopbillinventory.Adapters.AdapterItemsofBill
 import com.example.shopbillinventory.databinding.ActivityPaymentPlansBinding
 import com.google.android.material.snackbar.Snackbar
+import com.google.firebase.FirebaseApp
+import com.google.firebase.FirebaseOptions
 import com.google.firebase.database.*
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -21,7 +26,7 @@ import java.time.format.DateTimeFormatter
 class PaymentPlansActivity : AppCompatActivity() {
     private val UPI_PAYMENT_REQUEST_CODE = 123 // Define a request code for the UPI payment
     private lateinit var paymentPlansBinding: ActivityPaymentPlansBinding
-    lateinit var planamount: String
+    var planamount: Int = 0
     lateinit var futureDate: String
     var userDataData = hashMapOf<String, Any>()
     private var loginEmail: String? = null
@@ -36,75 +41,55 @@ class PaymentPlansActivity : AppCompatActivity() {
         loginEmail = intent?.getStringExtra("login_email")
         today = LocalDate.now()
         rootView = findViewById(android.R.id.content)
-        paymentPlansBinding.cvoneMonth.setOnClickListener {
-            planamount = paymentPlansBinding.tvOnemontAmount.text.toString()
-            futureDate = today.plusDays(28).toString()
-//            val parsedFutureDate = LocalDate.parse(futureDate)
-//            val parsedTodayDate = LocalDate.parse(today.toString())
-//            val formatter = DateTimeFormatter.ofPattern("d/M/yyyy")
-//            val futureDateFormatted = parsedFutureDate.format(formatter)
-//            val todaydate = parsedTodayDate.format(formatter)
-            // Toast.makeText(this, futureDateFormatted, Toast.LENGTH_SHORT).show()
-            getUserdata(futureDate, planamount)
 
+        val options = FirebaseOptions.Builder()
+            .setApplicationId("com.example.shopbillinventory")
+            .setApiKey("AIzaSyAB53hxifXMHW8Aq0Hhh-26E_FT86eRF7Q")
+            .setDatabaseUrl("https://shopadminpanel-default-rtdb.firebaseio.com")
+            // Add any other necessary configurations
+            .build()
 
+        //FirebaseApp.initializeApp(this, options, "Shopbillinventory")
+        val existingApp = FirebaseApp.getApps(this).find { it.name == "Shopbillinventory" }
+
+        if (existingApp == null) {
+            // FirebaseApp with the name "Shopbillinventory" doesn't exist, so initialize it
+            FirebaseApp.initializeApp(this, options, "Shopbillinventory")
         }
+        val database = FirebaseDatabase.getInstance(FirebaseApp.getInstance("Shopbillinventory"))
+        val planRef = database.getReference("plan_info")
 
-        paymentPlansBinding.cvThreeMonth.setOnClickListener {
-            planamount = paymentPlansBinding.tvThreeMonthAmount.text.toString()
-            futureDate = today.plusDays(84).toString()
-//            val parsedFutureDate = LocalDate.parse(futureDate)
-//            val formatter = DateTimeFormatter.ofPattern("d/M/yyyy")
-//            val futureDateFormatted = parsedFutureDate.format(formatter)
-//            openPhonePeWithAmount(planamount)
-            getUserdata(futureDate, planamount)
+        val planList = mutableListOf<PlanModel>()
 
-        }
-        paymentPlansBinding.cvOneYear.setOnClickListener {
-            planamount = paymentPlansBinding.tvOneYearAmount.text.toString()
-            futureDate = today.plusDays(364).toString()
-//            val parsedFutureDate = LocalDate.parse(futureDate)
-//            val formatter = DateTimeFormatter.ofPattern("d/M/yyyy")
-//            val futureDateFormatted = parsedFutureDate.format(formatter)
-//            openPhonePeWithAmount(planamount)
-            getUserdata(futureDate, planamount)
+        planRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                for (postSnapshot in snapshot.children) {
+                    val id = postSnapshot.key ?: ""
+                    val duration =
+                        postSnapshot.child("plan-duration").getValue(String::class.java) ?: ""
+                    val amount = postSnapshot.child("plan_amt").getValue(String::class.java) ?: ""
+                    val description =
+                        postSnapshot.child("plan_desc").getValue(String::class.java) ?: ""
+                    val plan = PlanModel(id, duration, amount, description)
+                    planList.add(plan)
+                }
+                // Call a function to display the list (step 5)
+                paymentPlansBinding.rvPlansInfo.layoutManager =
+                    LinearLayoutManager(this@PaymentPlansActivity)
+                paymentPlansBinding.rvPlansInfo.adapter = AdapterItemsOfPlansInfo(
+                    this@PaymentPlansActivity, planList
+                )
+            }
 
-        }
+            override fun onCancelled(error: DatabaseError) {
+                // Handle database error
+            }
+        })
+
 
     }
 
-    /* private fun openPhonePeWithAmount(amount: String) {
-         // Construct the URI for the payment deep link
-        // val uri = Uri.parse("upi://mandate?mn=Autopay&ver=01&rev=Y&purpose=14&validityend=02042034&QRts=2024-04-04T00:46:35.906802372+05:30&QRexpire=2024-04-04T00:51:35.906802372+05:30&txnType=CREATE&am=7.00&validitystart=04042024&mode=04&pa=TAMASHATVONLINE@ybl&cu=INR&amrule=MAX&mc=7993&qrMedium=00&recur=DAILY&mg=ONLINE&share=Y&block=N&tr=TX3348889977&pn=TamashaTV&orgid=180001&sign=MEUCIGmgX6sbRz2MX+/Khv/mJsX2X4pV87EaqLTGTZ5h5404AiEAijy3AFWryyFC7ssSXvKzbf4O47nS6lMowXeem4QKJps=")
-         val uri = Uri.parse("upi://pay?pa=8421888138@ybl&pn=TamashaTV&am=$amount&cu=INR&tn=Purpose%20of%20Payment")
-
-
-         // Create an Intent with ACTION_VIEW and the constructed URI
-         val intent = Intent(Intent.ACTION_VIEW, uri)
-
-         // Verify if there's an app available to handle this intent
-         if (intent.resolveActivity(packageManager) != null) {
-             // Start the activity to open the UPI app and initiate payment
-             startActivity(intent)
-         } else {
-             // Handle the case where no app is available to handle this intent
-         }
-
-
-     }*/
-
-
-    /*private fun openPhonePeWithAmount(amount: String) {
-        val uri =
-            Uri.parse("upi://pay?pa=8421888138@ybl&pn=TamashaTV&am=$amount&cu=INR&tn=Purpose%20of%20Payment")
-
-        val intent = Intent(Intent.ACTION_VIEW, uri)
-
-        // Start the activity for result to get status after payment
-        startActivityForResult(intent, UPI_PAYMENT_REQUEST_CODE)
-    }*/
-
-    private fun openPhonePeWithAmount(amount: String) {
+    private fun openPhonePeWithAmount(amount: Int) {
         val packageName = "com.phonepe.app" // Package name of PhonePe app
 
         // Check if PhonePe app is installed
@@ -117,18 +102,24 @@ class PaymentPlansActivity : AppCompatActivity() {
         }
 
         if (isPhonePeInstalled) {
+            // Construct intent
             val uri =
-                Uri.parse("upi://pay?pa=8421888138-2@ibl&pn=KSOFTTech&am=$amount&cu=INR&tn=Purpose%20of%20Payment")
+                Uri.parse("upi://pay?pa=9373351996@axl&pn=KSOFTTech&am=$amount&cu=INR&tn=Purpose%20of%20Payment")
             val intent = Intent(Intent.ACTION_VIEW, uri)
-
-            // Set the package to filter only PhonePe app
             intent.setPackage(packageName)
 
-            // Start the activity for result to get status after payment
-            startActivityForResult(intent, UPI_PAYMENT_REQUEST_CODE)
+            // Check if there's an activity available to handle the intent
+            if (intent.resolveActivity(packageManager) != null) {
+                // Start the activity for result to get status after payment
+                startActivityForResult(intent, UPI_PAYMENT_REQUEST_CODE)
+            } else {
+                Toast.makeText(applicationContext, "Unable to open PhonePe app", Toast.LENGTH_SHORT)
+                    .show()
+            }
         } else {
             // PhonePe app is not installed, handle accordingly
-            Toast.makeText(applicationContext, "PhonePe app is not installed", Toast.LENGTH_SHORT).show()
+            Toast.makeText(applicationContext, "PhonePe app is not installed", Toast.LENGTH_SHORT)
+                .show()
         }
     }
 
@@ -189,7 +180,7 @@ class PaymentPlansActivity : AppCompatActivity() {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
-    private fun getUserdata(futureDatePassed: String, planAmountPassed: String) {
+    private fun getUserdata(futureDatePassed: String, planAmountPassed: Int) {
 
         val parsedFutureDate = LocalDate.parse(futureDatePassed)
         val parsedTodayDate = LocalDate.parse(today.toString())
@@ -202,35 +193,33 @@ class PaymentPlansActivity : AppCompatActivity() {
         val email = sharedPreferences?.getString("email", "")
         val database = FirebaseDatabase.getInstance()
         val ref = database.getReference("registered_users")
-        val query: Query =
-            ref.child("Owner").orderByChild("email").equalTo(email)
+        val query: Query = ref.child(
+            "\n" +
+                    "plan_validity"
+        ).orderByChild("email").equalTo(email)
         query.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
                     for (snapshot in snapshot.children) {
                         val email = snapshot.child("email").getValue(String::class.java)
-                        val password = snapshot.child("password").getValue(String::class.java)
-                        val userType = snapshot.child("userType").getValue(String::class.java)
-                        val userId = snapshot.child("userid").getValue(Long::class.java)
-
-                        // Do whatever you want with the retrieved data
-                        // For example, you can log it
-                        println("Email: $email")
-                        println("password: $password")
-                        println("userType: $userType")
-                        println("Userid: $userId")
+                        val encodedEmail = encodeEmailAsFirebaseKeyBack(email!!)
+                        val end_date = snapshot.child("end_date").getValue(String::class.java)
+                        val planAmount = snapshot.child("userType").getValue(String::class.java)
+                        val start_date = snapshot.child("start_date").getValue(String::class.java)
+                        val validdays = snapshot.child("validdays").getValue(String::class.java)
 
 
                         userDataData.apply {
-                            put("email", email!!)
-                            put("password", password!!)
-                            put("userType", userType!!)
-                            put("userid", userId!!)
-                            put("plan_amount", planAmountPassed!!)
-                            put("start_date", todaydate!!)
-                            put("end_date", futureDateFormatted!!)
+                            put("email", encodedEmail!!)
+                            put("end_date", end_date!!)
+                            put("planAmount", planAmount!!)
+                            put("start_date", start_date!!)
+                            put("validdays", validdays!!)
                         }
-                        openPhonePeWithAmount(planAmountPassed)
+                        //openPhonePeWithAmount(planAmountPassed)
+
+
+
                     }
 
 
@@ -243,6 +232,11 @@ class PaymentPlansActivity : AppCompatActivity() {
             }
 
         })
+
+    }
+
+    fun encodeEmailAsFirebaseKeyBack(email: String): String {
+        return email.replace(",", ".")
     }
 
 }

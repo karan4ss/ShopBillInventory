@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "541392635739",
+    "project_id": "shopadminpanel",
+    "storage_bucket": "shopadminpanel.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:541392635739:android:e601192b9d63749c907c7e",
+        "android_client_info": {
+          "package_name": "com.example.shopbillinventory"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAB53hxifXMHW8Aq0Hhh-26E_FT86eRF7Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

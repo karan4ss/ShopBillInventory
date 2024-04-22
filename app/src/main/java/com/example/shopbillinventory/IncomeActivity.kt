@@ -3,6 +3,7 @@ package com.example.shopbillinventory
 import android.app.DatePickerDialog
 import android.os.Build
 import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -34,7 +35,7 @@ class IncomeActivity : AppCompatActivity() {
 
 
         val c = Calendar.getInstance()
-        val df = SimpleDateFormat("dd-MM-yyyy")
+        val df = SimpleDateFormat("d-M-yyyy")
         val formattedDate = df.format(c.time)
         incomeBinding.ivArrowup.setOnClickListener {
             // Increase the date by one day
@@ -50,7 +51,10 @@ class IncomeActivity : AppCompatActivity() {
         }
 
 
-
+        incomeBinding.btnClear.setOnClickListener {
+            incomeBinding.rbtnCash.isChecked = false
+            incomeBinding.rbtnOnline.isChecked = false
+        }
         incomeBinding.tvSelectDate.setOnClickListener {
             // The instance of our calendar.
             val c = Calendar.getInstance()
@@ -79,78 +83,175 @@ class IncomeActivity : AppCompatActivity() {
 
         incomeBinding.btnShowHistoryinMixOrder.setOnClickListener {
             val selectedDate = incomeBinding.tvSetdate.text.toString()
-            val dbReferenceForTodaysBusiness =
-                databaseReference.child("Todays_Business_Amount").child(currentMonth).child("Cash")
-                    .child(selectedDate)
+            if (incomeBinding.rbtnCash.isChecked) {
+                //for cash payment
 
-            dbReferenceForTodaysBusiness.addListenerForSingleValueEvent(object :
-                ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        val businessAmount = snapshot.getValue(Int::class.java)
-                        // Handle the retrieved business amount
-                        //  println("Business amount: $businessAmount")
+                val dbReferenceForTodaysBusiness =
+                    databaseReference.child("Todays_Business_Amount").child(currentMonth)
+                        .child("Cash")
+                        .child(selectedDate)
 
-                        if (businessAmount != null) {
-                            globalTodayAmount =
-                                (globalTodayAmount.toInt() + businessAmount.toInt()).toLong()
+                dbReferenceForTodaysBusiness.addListenerForSingleValueEvent(object :
+                    ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if (snapshot.exists()) {
+                            val businessAmount = snapshot.getValue(Int::class.java)
+                            // Handle the retrieved business amount
+                            //  println("Business amount: $businessAmount")
+
+                            if (businessAmount != null) {
+                                incomeBinding.tvShowsAmount.setText("Cash : " + businessAmount.toString() + " Rs")
+                                incomeBinding.tvtodyasbussinessamount.visibility = View.VISIBLE
+                                incomeBinding.tvShowsAmount.visibility = View.VISIBLE
+                            } else {
+                                globalTodayAmount = 0.toLong()
+                                incomeBinding.tvtodyasbussinessamount.visibility = View.GONE
+                                incomeBinding.tvShowsAmount.visibility = View.GONE
+                            }
                         } else {
-                            globalTodayAmount = 0.toLong()
+                            // Node does not exist for the specified date
+                            Toast.makeText(
+                                this@IncomeActivity,
+                                "No data available for today",
+                                Toast.LENGTH_SHORT
+                            ).show()
                         }
-                    } else {
-                        // Node does not exist for the specified date
-                        Toast.makeText(
-                            this@IncomeActivity,
-                            "No data available for today",
-                            Toast.LENGTH_SHORT
-                        ).show()
                     }
-                }
 
-                override fun onCancelled(error: DatabaseError) {
-                    // Handle onCancelled event
-                }
-            })
+                    override fun onCancelled(error: DatabaseError) {
+                        // Handle onCancelled event
+                    }
+                })
+            } else if (incomeBinding.rbtnOnline.isChecked) {
+
+                val dbReferenceForTodaysBusinessforonline =
+                    databaseReference.child("Todays_Business_Amount").child(currentMonth)
+                        .child("Online")
+                        .child(selectedDate)
+
+                dbReferenceForTodaysBusinessforonline.addListenerForSingleValueEvent(object :
+                    ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if (snapshot.exists()) {
+                            val businessAmount = snapshot.getValue(Int::class.java)
+                            // Handle the retrieved business amount
+                            //  println("Business amount: $businessAmount")
+
+                            if (businessAmount != null) {
+                                incomeBinding.tvShowsAmount.setText("Online : " + businessAmount.toString() + " Rs")
+                                incomeBinding.tvtodyasbussinessamount.visibility = View.VISIBLE
+                                incomeBinding.tvShowsAmount.visibility = View.VISIBLE
 
 
-            //////for online payment
-            val dbReferenceForTodaysBusinessforonline =
-                databaseReference.child("Todays_Business_Amount").child(currentMonth)
-                    .child("Online")
-                    .child(selectedDate)
-
-            dbReferenceForTodaysBusinessforonline.addListenerForSingleValueEvent(object :
-                ValueEventListener {
-                override fun onDataChange(snapshot: DataSnapshot) {
-                    if (snapshot.exists()) {
-                        val businessAmount = snapshot.getValue(Int::class.java)
-                        // Handle the retrieved business amount
-                        //  println("Business amount: $businessAmount")
-
-                        if (businessAmount != null) {
-                            globalTodayAmount =
-                                (globalTodayAmount.toInt() + businessAmount.toInt()).toLong()
-                            incomeBinding.tvShowsAmount.setText(globalTodayAmount.toString())
-                            globalTodayAmount = 0
+                            } else {
+                                globalTodayAmount = 0.toLong()
+                                incomeBinding.tvtodyasbussinessamount.visibility = View.GONE
+                                incomeBinding.tvShowsAmount.visibility = View.GONE
+                            }
 
                         } else {
-                            globalTodayAmount = 0.toLong()
+                            // Node does not exist for the specified date
+                            Toast.makeText(
+                                this@IncomeActivity,
+                                "No data available for today",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            incomeBinding.tvtodyasbussinessamount.visibility = View.GONE
+                            incomeBinding.tvShowsAmount.visibility = View.GONE
                         }
-
-                    } else {
-                        // Node does not exist for the specified date
-                        Toast.makeText(
-                            this@IncomeActivity,
-                            "No data available for today",
-                            Toast.LENGTH_SHORT
-                        ).show()
                     }
-                }
 
-                override fun onCancelled(error: DatabaseError) {
-                    // Handle onCancelled event
-                }
-            })
+                    override fun onCancelled(error: DatabaseError) {
+                        // Handle onCancelled event
+                    }
+                })
+
+            } else {
+                //for cash payment
+
+                val dbReferenceForTodaysBusiness =
+                    databaseReference.child("Todays_Business_Amount").child(currentMonth)
+                        .child("Cash")
+                        .child(selectedDate)
+
+                dbReferenceForTodaysBusiness.addListenerForSingleValueEvent(object :
+                    ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if (snapshot.exists()) {
+                            val businessAmount = snapshot.getValue(Int::class.java)
+                            // Handle the retrieved business amount
+                            //  println("Business amount: $businessAmount")
+
+                            if (businessAmount != null) {
+                                globalTodayAmount =
+                                    (globalTodayAmount.toInt() + businessAmount.toInt()).toLong()
+                            } else {
+                                globalTodayAmount = 0.toLong()
+                            }
+                        } else {
+                            // Node does not exist for the specified date
+                            Toast.makeText(
+                                this@IncomeActivity,
+                                "No data available for today",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        // Handle onCancelled event
+                    }
+                })
+
+
+                //////for online payment
+                val dbReferenceForTodaysBusinessforonline =
+                    databaseReference.child("Todays_Business_Amount").child(currentMonth)
+                        .child("Online")
+                        .child(selectedDate)
+
+                dbReferenceForTodaysBusinessforonline.addListenerForSingleValueEvent(object :
+                    ValueEventListener {
+                    override fun onDataChange(snapshot: DataSnapshot) {
+                        if (snapshot.exists()) {
+                            val businessAmount = snapshot.getValue(Int::class.java)
+                            // Handle the retrieved business amount
+                            //  println("Business amount: $businessAmount")
+
+                            if (businessAmount != null) {
+                                globalTodayAmount =
+                                    (globalTodayAmount.toInt() + businessAmount.toInt()).toLong()
+                                incomeBinding.tvShowsAmount.setText(globalTodayAmount.toString() + " Rs")
+                                if (globalTodayAmount.toString() != null) {
+                                    incomeBinding.tvtodyasbussinessamount.visibility = View.VISIBLE
+                                    incomeBinding.tvShowsAmount.visibility = View.VISIBLE
+
+                                }
+
+                                globalTodayAmount = 0
+
+
+                            } else {
+                                globalTodayAmount = 0.toLong()
+                            }
+
+                        } else {
+                            // Node does not exist for the specified date
+                            Toast.makeText(
+                                this@IncomeActivity,
+                                "No data available for today",
+                                Toast.LENGTH_SHORT
+                            ).show()
+                            incomeBinding.tvtodyasbussinessamount.visibility = View.GONE
+                            incomeBinding.tvShowsAmount.visibility = View.GONE
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        // Handle onCancelled event
+                    }
+                })
+            }
 
 
         }

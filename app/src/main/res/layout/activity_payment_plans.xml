@@ -31,212 +31,26 @@
             android:layout_height="match_parent"
             android:layout_marginVertical="25dp">
 
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cvoneMonth"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="15dp"
-                app:cardBackgroundColor="@color/bussinesscard_bg_color"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="3dp"
-                app:layout_constraintTop_toTopOf="parent">
+         <androidx.recyclerview.widget.RecyclerView
+             android:id="@+id/rvPlansInfo"
+             android:layout_width="match_parent"
+             android:layout_height="wrap_content"
+             app:layout_constraintTop_toTopOf="parent"
+             app:layout_constraintStart_toStartOf="parent"
+             app:layout_constraintBottom_toTopOf="@+id/ivPrinterimgae"
+             app:layout_constraintEnd_toEndOf="parent"/>
 
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="5dp"
-                    android:padding="5dp">
-
-                    <TextView
-                        android:id="@+id/tvOneMonth"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/oneMonth"
-                        android:textColor="@color/white"
-                        android:textSize="24sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/tvOneMonthDescription"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:text="@string/onemonthDesc"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvOneMonth" />
-
-                    <TextView
-                        android:id="@+id/tvOnemontAmount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
-                        android:text="@string/oneMonthAmt"
-                        android:textColor="@color/white"
-                        android:textSize="20sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/tvOneMonthDescription"
-                        app:layout_constraintRight_toLeftOf="@+id/tvmrpslash"
-                        app:layout_constraintTop_toTopOf="@+id/tvOneMonth" />
-
-                    <TextView
-                        android:id="@+id/tvmrpslash"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="/-"
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/tvOneMonthDescription"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/tvOneMonth" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cvThreeMonth"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="15dp"
-                android:layout_marginTop="30dp"
-                app:cardBackgroundColor="@color/bussinesscard_bg_color"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="3dp"
-                app:layout_constraintTop_toBottomOf="@+id/cvoneMonth">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="5dp"
-                    android:padding="5dp">
-
-                    <TextView
-                        android:id="@+id/tvThreeMonth"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/threeMonths"
-                        android:textColor="@color/white"
-                        android:textSize="24sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/tvThreeMonthDescription"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:text="@string/threemonthDesc"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvThreeMonth" />
-
-                    <TextView
-                        android:id="@+id/tvThreeMonthAmount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
-                        android:text="@string/ThreeMonthsAmt"
-                        android:textColor="@color/white"
-                        android:textSize="20sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/tvThreeMonthDescription"
-                        app:layout_constraintRight_toLeftOf="@+id/tvmrpslash1"
-                        app:layout_constraintTop_toTopOf="@+id/tvThreeMonth" />
-
-                    <TextView
-                        android:id="@+id/tvmrpslash1"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="/-"
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/tvThreeMonthDescription"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/tvThreeMonth" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </androidx.cardview.widget.CardView>
-
-            <androidx.cardview.widget.CardView
-                android:id="@+id/cvOneYear"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginHorizontal="15dp"
-                android:layout_marginTop="30dp"
-                app:cardBackgroundColor="@color/bussinesscard_bg_color"
-                app:cardCornerRadius="10dp"
-                app:cardElevation="3dp"
-                app:layout_constraintTop_toBottomOf="@+id/cvThreeMonth">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_margin="5dp"
-                    android:padding="5dp">
-
-                    <TextView
-                        android:id="@+id/tvOneYear"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@string/oneYear"
-                        android:textColor="@color/white"
-                        android:textSize="24sp"
-                        android:textStyle="bold"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <TextView
-                        android:id="@+id/tvOneYearDescription"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginTop="5dp"
-                        android:text="@string/oneyearDesc"
-                        android:textColor="@color/white"
-                        android:textSize="16sp"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvOneYear" />
-
-                    <TextView
-                        android:id="@+id/tvOneYearAmount"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_marginEnd="5dp"
-                        android:text="@string/oneYearAmt"
-                        android:textColor="@color/white"
-                        android:textSize="20sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/tvOneYearDescription"
-                        app:layout_constraintRight_toLeftOf="@+id/tvmrpslash2"
-                        app:layout_constraintTop_toTopOf="@+id/tvOneYear" />
-
-                    <TextView
-                        android:id="@+id/tvmrpslash2"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="/-"
-                        android:textColor="@color/white"
-                        android:textSize="18sp"
-                        app:layout_constraintBottom_toBottomOf="@+id/tvOneYearDescription"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="@+id/tvOneYear" />
-
-                </androidx.constraintlayout.widget.ConstraintLayout>
-
-            </androidx.cardview.widget.CardView>
 
 
             <ImageView
+                android:id="@+id/ivPrinterimgae"
                 android:layout_width="match_parent"
                 android:layout_height="250dp"
                 android:layout_marginHorizontal="10dp"
                 android:layout_marginTop="20dp"
                 android:src="@drawable/pos_terminal"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/cvOneYear" />
+                app:layout_constraintTop_toBottomOf="@+id/rvPlansInfo" />
         </androidx.constraintlayout.widget.ConstraintLayout>
 
 
