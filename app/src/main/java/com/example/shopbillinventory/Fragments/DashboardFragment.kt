@@ -6,14 +6,16 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import androidx.annotation.RequiresApi
+import androidx.appcompat.widget.AppCompatButton
+import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import com.example.shopbillinventory.*
 import com.example.shopbillinventory.R
 import com.example.shopbillinventory.databinding.FragmentDashboardBinding
@@ -24,15 +26,18 @@ import java.text.SimpleDateFormat
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 import java.util.*
-import kotlin.collections.HashMap
 
 class DashboardFragment : Fragment() {
     private lateinit var binding: FragmentDashboardBinding
 
     private var loginEmail: String? = null
     lateinit var dialog: Dialog
+    lateinit var dialogcard: Dialog
     lateinit var btnCancelRecharge: Button
     lateinit var btnGotoRecharge: Button
+    lateinit var btnDownload: AppCompatButton
+    lateinit var btnCancel: AppCompatButton
+    lateinit var cvpopuupdownload: CardView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -96,7 +101,7 @@ class DashboardFragment : Fragment() {
             val email = sharedPreferences?.getString("email", "")
 
             // retrieveData()
-            if(email!=null){
+            if (email != null) {
                 retrieveDataByEmail(email)
             }
 
@@ -105,6 +110,46 @@ class DashboardFragment : Fragment() {
             val intent = Intent(context, IncomeActivity::class.java)
             startActivity(intent)
         }
+
+        binding.cvofBussinessCard.setOnLongClickListener {
+            dialogcard = Dialog(requireContext())
+            dialogcard.setContentView(R.layout.custome_download_popup)
+            btnDownload = dialogcard.findViewById(R.id.btndownloadimage)
+            btnCancel = dialogcard.findViewById(R.id.btncanceldownload)
+            btnDownload = dialogcard.findViewById<AppCompatButton>(R.id.btndownloadimage)
+            btnCancel = dialogcard.findViewById<AppCompatButton>(R.id.btncanceldownload)
+            cvpopuupdownload = dialogcard.findViewById<CardView>(R.id.cvpopuupdownload)
+            dialogcard.window!!.setLayout(
+                ViewGroup.LayoutParams.WRAP_CONTENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
+            dialogcard.window!!.setBackgroundDrawable(
+                ContextCompat.getDrawable(
+                    requireContext(),
+                    R.drawable.custome_dialog_bg
+                )
+            )
+            dialogcard.setCancelable(false)
+            dialogcard.show()
+
+            btnDownload.setOnClickListener {
+                val isDownload = ImageUtil.getandDownload(requireContext(), binding.cvofBussinessCard)
+                if (isDownload) {
+                    Toast.makeText(context, "Card Downloaded..!", Toast.LENGTH_SHORT).show()
+                    dialogcard.dismiss()
+                } else {
+                    Toast.makeText(context, "Download Failed..!", Toast.LENGTH_SHORT).show()
+                    dialogcard.dismiss()
+                }
+            }
+
+            btnCancel.setOnClickListener {
+                dialogcard.dismiss()
+            }
+
+            true // Return true to consume the long click event
+        }
+
 
         return view
     }
@@ -176,11 +221,14 @@ class DashboardFragment : Fragment() {
                     }
                 } else {
                     // Data does not exist
-                    Toast.makeText(
-                        context,
-                        "Please Recharge First...!",
-                        Toast.LENGTH_SHORT
-                    ).show()
+                    /* Toast.makeText(
+                         context,
+                         "Please Recharge First...!",
+                         Toast.LENGTH_SHORT
+                     ).show()*/
+                    btnCancelRecharge.setOnClickListener {
+                        dialog.dismiss()
+                    }
                 }
             }
 
@@ -218,7 +266,7 @@ class DashboardFragment : Fragment() {
                     for (snapshot in dataSnapshot.children) {
 
                         val getemail = snapshot.child("email").getValue(String::class.java)
-                        val encodeEmailBack =encodeEmailAsFirebaseKeyBack(getemail.toString()!!)
+                        val encodeEmailBack = encodeEmailAsFirebaseKeyBack(getemail.toString()!!)
                         val end_date = snapshot.child("end_date").getValue(String::class.java)
                         val planAmount = snapshot.child("planAmount").getValue(String::class.java)
                         val start_date = snapshot.child("start_date").getValue(String::class.java)
@@ -292,6 +340,7 @@ class DashboardFragment : Fragment() {
             }
         })
     }
+
     fun encodeEmailAsFirebaseKeyBack(email: String): String {
         return email.replace(",", ".")
     }

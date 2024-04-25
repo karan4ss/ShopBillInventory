@@ -30,12 +30,13 @@ class AdapterGenratedBills(
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         holder.tvBillid.setText("Bill No : " + dataList.get(position).billingId.toString())
         holder.tvnoofItems.setText(dataList.get(position).items + " " + "Items")
-        holder.tvgrandTotal.setText("Grand_Total :" + dataList.get(position).grandTotal.toString())
+        holder.tvgrandTotal.setText("Grand_Total :" + dataList.get(position).payment_mode.toString())
 
         holder.llofBillItems.setOnClickListener {
             val intent = Intent(context, ShowPerticularBillActivity::class.java)
             intent.putExtra("billid", dataList.get(position).billingId.toString())
             intent.putExtra("grand_totoal", dataList.get(position).grandTotal.toString())
+            intent.putExtra("payment_mode", dataList.get(position).payment_mode.toString())
             context.startActivity(intent)
         }
     }

@@ -29,7 +29,7 @@ class AdapterItemsOfPlansInfo(
 
         holder.tvOneMonth.setText(dataList.get(position).duration)
         holder.tvOnemontAmount.setText(dataList.get(position).amount)
-        holder.tvOneMonthDescription.setText(dataList.get(position).description)
+        holder.tvOneMonthDescription.setText("Valid for " + dataList.get(position).description + " days")
 
     }
 

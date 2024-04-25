@@ -46,10 +46,12 @@
                         app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
 
+
                     <TextView
                         android:id="@+id/tvmobilenumber"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
                         android:textColor="@color/white"
                         android:textSize="14sp"
                         app:layout_constraintEnd_toEndOf="@+id/tvBussinessName"
@@ -57,15 +59,36 @@
                         app:layout_constraintTop_toBottomOf="@+id/tvBussinessName" />
 
                     <TextView
+                        android:id="@+id/tvAddressinBill"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="5dp"
+                        android:textColor="@color/white"
+                        android:textSize="10sp"
+                        app:layout_constraintEnd_toEndOf="@+id/tvmobilenumber"
+                        app:layout_constraintStart_toStartOf="@+id/tvmobilenumber"
+                        app:layout_constraintTop_toBottomOf="@+id/tvmobilenumber" />
+
+                    <View
+                        android:id="@+id/view1"
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginHorizontal="5dp"
+                        android:layout_marginTop="8dp"
+                        android:background="@color/light_white"
+                        app:layout_constraintTop_toBottomOf="@+id/tvAddressinBill" />
+
+                    <TextView
                         android:id="@+id/tvBillNo"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginStart="20dp"
+                        android:layout_marginStart="10dp"
                         android:textColor="@color/white"
                         android:textSize="14sp"
                         android:textStyle="bold"
+                        android:layout_marginTop="2dp"
                         app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toBottomOf="@+id/tvmobilenumber" />
+                        app:layout_constraintTop_toBottomOf="@+id/view1" />
 
                     <LinearLayout
                         android:id="@+id/llofpertuclarbillTitles"
@@ -79,13 +102,13 @@
 
                         <TextView
                             android:id="@+id/tvNo"
-                            android:visibility="gone"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="10dp"
                             android:text="No."
                             android:textColor="@color/white"
                             android:textSize="12sp"
+                            android:visibility="gone"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@+id/tvmobilenumber" />
 
@@ -170,13 +193,27 @@
                         android:id="@+id/tvGrandTotatal"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginTop="30dp"
                         android:layout_marginEnd="25dp"
                         android:layout_marginBottom="20dp"
                         android:textColor="@color/white"
                         android:textStyle="bold"
                         app:layout_constraintBottom_toBottomOf="parent"
                         app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintTop_toBottomOf="@+id/rvofPerticularBill" />
+
+                    <TextView
+                        android:id="@+id/tvGrandPaymentMode"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="20dp"
+                        android:layout_marginTop="20dp"
+                        android:layout_marginEnd="25dp"
+                        android:layout_marginBottom="20dp"
+                        android:textColor="@color/white"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
                         app:layout_constraintTop_toBottomOf="@+id/rvofPerticularBill" />
 
                 </androidx.constraintlayout.widget.ConstraintLayout>

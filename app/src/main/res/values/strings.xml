@@ -5,7 +5,7 @@
     <string name="pleasegotoemailtochnagepassword">Email is sent to gmail \n Please go to the Gmail to Change the Passord</string>
     <string name="dashboard">Dashboard</string>
     <string name="billhistory">Bill History</string>
-    <string name="BussInfo">Buss Info</string>
+    <string name="BussInfo">Bussi. Info</string>
     <string name="oneMonth">1 Month</string>
     <string name="threeMonths">3 Month</string>
     <string name="oneYear">1 Year</string>
@@ -32,5 +32,9 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="yourplanexpired">Your Plan is Expired</string>
     <string name="pleaserechargetostartbilling">Please Recharge to start the billing</string>
+    <string name="pleasecontact">Please contact to 8421888138 \n to recharge for your app</string>
+
+    <string name="downloadimage">Download Card</string>
+    <string name="suretodownloadimage">Do you want to download the Card?</string>
 
 </resources>

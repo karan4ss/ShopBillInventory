@@ -12,6 +12,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.text.Editable
 import android.util.Log
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
@@ -33,6 +34,7 @@ class ShowPerticularBillActivity : AppCompatActivity() {
     private lateinit var databaseReference: DatabaseReference
     lateinit var dialog: Dialog
     var grand_totoal: String = ""
+    var payment_mode: String = ""
     lateinit var btnShare: Button
     lateinit var btnCancel: Button
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,10 +42,38 @@ class ShowPerticularBillActivity : AppCompatActivity() {
         perticularBillBinding = ActivityShowPerticularBillBinding.inflate(layoutInflater)
 
         setContentView(perticularBillBinding.root)
+
+
+
         val bill_id = intent?.getStringExtra("billid")
         grand_totoal = intent?.getStringExtra("grand_totoal").toString()
+        payment_mode = intent?.getStringExtra("payment_mode").toString()
         database = FirebaseDatabase.getInstance()
         databaseReference = database.reference
+
+       // val database = FirebaseDatabase.getInstance()
+        val businessRef = database.getReference("bussiness_info").child("1")
+
+
+        businessRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                if (dataSnapshot.exists()) {
+                    val businessInfo = dataSnapshot.value as HashMap<String, Any>
+                    perticularBillBinding.tvBussinessName.setText(businessInfo["name"] as String)
+                    perticularBillBinding.tvmobilenumber.setText(businessInfo["mobile_number"] as String)
+                    perticularBillBinding.tvAddressinBill.setText(businessInfo["address"] as String)
+
+                } else {
+
+                }
+            }
+
+            override fun onCancelled(databaseError: DatabaseError) {
+                Log.d("MainActivity", "Error getting data", databaseError.toException())
+            }
+        })
+
+
         if (bill_id != null || bill_id != "") {
             fetchDataFromFirebase(bill_id.toString())
         }
@@ -67,7 +97,8 @@ class ShowPerticularBillActivity : AppCompatActivity() {
             }
             btnShare.setOnClickListener {
 
-                perticularBillBinding.tvmobilenumber.setText(dialog.findViewById<EditText>(R.id.etMobileNumber).text)
+               // perticularBillBinding.tvmobilenumber.setText(dialog.findViewById<EditText>(R.id.etMobileNumber).text)
+
 
                 //  val phoneNumber = dialog.findViewById<EditText>(R.id.etMobileNumber).text.toString()
                 // if (phoneNumber.isNotEmpty()) {
@@ -129,6 +160,7 @@ class ShowPerticularBillActivity : AppCompatActivity() {
                             )
                         }
                     perticularBillBinding.tvGrandTotatal.setText("Grand Total : " + grand_totoal)
+                    perticularBillBinding.tvGrandPaymentMode.setText("Mode : " + payment_mode)
                     perticularBillBinding.tvBillNo.setText("Bill No : " + billId)
 
                     // Do something with the list of items

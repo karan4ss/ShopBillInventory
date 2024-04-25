@@ -11,5 +11,5 @@
     <item
         android:id="@+id/bottom_nav_bussprofile"
         android:icon="@drawable/bussiness_info_icon"
-        android:title="@string/dashboard"/>
+        android:title="@string/BussInfo"/>
 </menu>

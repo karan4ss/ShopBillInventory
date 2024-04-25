@@ -53,6 +53,7 @@ class Fragment_BillPaymentHistory : Fragment() {
                                 itemSnapshot.child("Confirmed_grandTotal").value?.toString()
                                     ?.toInt()
                                     ?: 0
+                            val payment_mode = itemSnapshot.child("Payment_Mode").value?.toString()
 
                             itemSnapshot.child("Confirmed_Bill_Items").children.forEach { itemSnapshot ->
                                 val qty = itemSnapshot.child("qty").value?.toString()?.toInt() ?: 0
@@ -60,17 +61,19 @@ class Fragment_BillPaymentHistory : Fragment() {
                             }
 
                             val bill =
-                                GernratedBillsModel(billing, (items.size).toString(), grandTotal)
+                                GernratedBillsModel(billing, (items.size).toString(), grandTotal,
+                                    payment_mode.toString()
+                                )
                             billList.add(bill)
                         }
-
+                        val reversedList = billList.reversed()
                         bindFragment_BillPaymentHistory.rvOfBills.layoutManager =
                             LinearLayoutManager(context)
                         bindFragment_BillPaymentHistory.rvOfBills.adapter =
                             context?.let {
                                 AdapterGenratedBills(
                                     it,
-                                    billList
+                                    reversedList
                                 )
                             }
                     }
